@@ -43,7 +43,6 @@ class ResPartner(models.Model):
         # TODO
         return
 
-    @api.one
     def create_from(self):
         # TODO
         logging.debug("CREATE FROM CALL")
