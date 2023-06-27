@@ -54,7 +54,6 @@ class ResPartner(models.Model):
         rec._check_company_code()
         return rec
 
-    @api.multi
     def write(self, values):
         res = super(ResPartner, self).write(values)
         if (
@@ -92,7 +91,6 @@ class ResPartner(models.Model):
         for partner in self:
             partner.display_name = names.get(partner.id)
 
-    @api.multi
     def name_get(self):
         res = []
         for rec in self:
