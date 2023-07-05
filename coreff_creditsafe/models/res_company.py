@@ -31,10 +31,11 @@ class ResCompany(models.Model):
     @api.onchange("parent_id", "creditsafe_use_parent_company")
     def _compute_parent_url(self):
         for rec in self:
-            if rec.parent_id and rec.creditsafe_use_parent_company:
-                rec.creditsafe_parent_url = rec.get_parent_creditsafe_field(
-                    "creditsafe_url"
-                )
+            rec.creditsafe_parent_url = (
+                rec.get_parent_creditsafe_field("creditsafe_url")
+                if rec.parent_id and rec.creditsafe_use_parent_company
+                else False
+            )
 
     @api.depends("parent_id")
     @api.onchange("parent_id", "creditsafe_use_parent_company")
