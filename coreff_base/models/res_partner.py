@@ -26,8 +26,14 @@ class ResPartner(models.Model):
 
     coreff_company_code = fields.Char()
     coreff_company_code_mandatory = fields.Boolean(
-        related="company_id.coreff_company_code_mandatory"
+        compute="_compute_coreff_company_code_mandatory"
     )
+
+    def _compute_coreff_company_code_mandatory(self):
+        for rec in self:
+            rec.coreff_company_code_mandatory = (
+                self.env.user.company_id.coreff_company_code_mandatory
+            )
 
     # -------------------------
     # unimplemented method that will be defined in other module to
