@@ -26,7 +26,7 @@ class ResPartner(models.Model):
 
     coreff_company_code = fields.Char()
     coreff_company_code_mandatory = fields.Boolean(
-        compute="_compute_coreff_company_code_mandatory"
+        compute="_compute_coreff_company_code_mandatory", store=False
     )
 
     def _compute_coreff_company_code_mandatory(self):
