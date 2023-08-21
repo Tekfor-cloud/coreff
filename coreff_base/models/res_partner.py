@@ -29,6 +29,14 @@ class ResPartner(models.Model):
         compute="_compute_coreff_company_code_mandatory", store=False
     )
 
+    @api.model
+    def default_get(self, default_fields):
+        values = super().default_get(default_fields)
+        values[
+            "coreff_company_code_mandatory"
+        ] = self.env.user.company_id.coreff_company_code_mandatory
+        return values
+
     def _compute_coreff_company_code_mandatory(self):
         for rec in self:
             rec.coreff_company_code_mandatory = (
