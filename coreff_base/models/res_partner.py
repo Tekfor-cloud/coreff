@@ -19,7 +19,7 @@ class ResPartner(models.Model):
     _sql_constraints = [
         (
             "coreff_company_code_uniq",
-            "unique (coreff_company_code, company_id)",
+            "unique (coreff_company_code)",
             "Company code must be unique",
         )
     ]
