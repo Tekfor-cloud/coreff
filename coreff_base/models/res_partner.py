@@ -10,6 +10,7 @@ import logging
 
 from odoo import api, models, fields, _
 from odoo.exceptions import UserError
+from odoo.osv import expression
 
 
 class ResPartner(models.Model):
@@ -26,7 +27,7 @@ class ResPartner(models.Model):
     # CM: Add company_id field manually as required to set default
     # to current company
     company_id = fields.Many2one(
-        'res.company', index=True, default=lambda self: self.env.company
+        "res.company", index=True, default=lambda self: self.env.company
     )
     coreff_company_code = fields.Char()
     coreff_company_code_mandatory = fields.Boolean(
@@ -104,24 +105,16 @@ class ResPartner(models.Model):
             res.append((rec.id, name))
         return res
 
-    # CM: Disabled as causes crash in Odoo V14 - Apparently allows searching a
-    # partner by coreff_company_code in addition to name.
-    # @api.model
-    # def _name_search(
-    #    self, name, args=None, operator="ilike", limit=100, name_get_uid=None
-    # ):
-    #    res1 = super(ResPartner, self)._name_search(
-    #        name, args, operator, limit, name_get_uid
-    #    )
-
-    #    access_rights_uid = name_get_uid or self._uid
-    #    res2_args = (args if args else []) + [
-    #        ("coreff_company_code", operator, name)
-    #    ]
-    #    ids = self._search(
-    #        res2_args, limit=limit, access_rights_uid=access_rights_uid
-    #    )
-    #    res2 = models.lazy_name_get(self.browse(ids).sudo(access_rights_uid))
-
-    #    res = res1 + [v for v in res2 if v not in res1]
-    #    return res
+    @api.model
+    def _name_search(
+        self, name, args=None, operator="ilike", limit=100, name_get_uid=None
+    ):
+        name_res = super(ResPartner, self)._name_search(
+            name, args, operator, limit, name_get_uid
+        )
+        code_res = self._search(
+            [("coreff_company_code", operator, name)],
+            limit=limit,
+            access_rights_uid=name_get_uid,
+        )
+        return list(set(name_res + list(code_res)))
