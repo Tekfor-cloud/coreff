@@ -117,4 +117,4 @@ class ResPartner(models.Model):
             limit=limit,
             access_rights_uid=name_get_uid,
         )
-        return list(set(name_res + list(code_res)))
+        return list(set(list(name_res) + list(code_res)))
