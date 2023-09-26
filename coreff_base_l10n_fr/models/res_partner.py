@@ -17,4 +17,6 @@ class ResPartner(models.Model):
     def coreff_update_siret(self):
         for rec in self:
             if rec.country_id.code == "FR" and rec.coreff_company_code:
-                rec.siret = rec.coreff_company_code
+                rec.siret = rec.coreff_company_code + "*" * max(
+                    14 - len(rec.coreff_company_code), 0
+                )
