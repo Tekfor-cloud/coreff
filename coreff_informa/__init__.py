@@ -4,3 +4,4 @@
 # @license: LGPL v3
 
 from . import models
+from . import mixins

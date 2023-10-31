@@ -3,13 +3,15 @@
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
 
 import datetime
-from odoo import fields
+from odoo import models, fields
 
 
-class InformaDataMixin(object):
+class InformaDataMixin(models.AbstractModel):
     """
     Fields for informa informations
     """
+
+    _name = "coreff.informa.data.mixin"
 
     informa_visibility = fields.Boolean(
         compute="_compute_informa_visibility",
