@@ -10,4 +10,5 @@ class Partner(models.Model):
     Add informa fields from InformaDataMixin
     """
 
+    _name = "res.partner"
     _inherit = ["res.partner", "coreff.informa.data.mixin"]
