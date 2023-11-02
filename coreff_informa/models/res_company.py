@@ -28,10 +28,11 @@ class ResCompany(models.Model):
     @api.onchange("parent_id", "informa_use_parent_company")
     def _compute_parent_url(self):
         for rec in self:
-            if rec.parent_id and rec.informa_use_parent_company:
-                rec.informa_parent_url = rec.get_parent_informa_field(
-                    "informa_url"
-                )
+            rec.informa_parent_url = (
+                rec.get_parent_informa_field("informa_url")
+                if rec.parent_id and rec.informa_use_parent_company
+                else False
+            )
 
     @api.depends("parent_id")
     @api.onchange("parent_id", "informa_use_parent_company")
