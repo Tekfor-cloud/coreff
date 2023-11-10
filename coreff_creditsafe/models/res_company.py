@@ -18,17 +18,19 @@ class ResCompany(models.Model):
     creditsafe_password = fields.Char()
     creditsafe_language = fields.Char(default="en")
 
-    creditsafe_parent_url = fields.Char(compute="_compute_parent_url")
+    creditsafe_parent_url = fields.Char(
+        compute="_compute_creditsafe_parent_url"
+    )
     creditsafe_parent_username = fields.Char(
-        compute="_compute_parent_username"
+        compute="_compute_creditsafe_parent_username"
     )
     creditsafe_parent_password = fields.Char(
-        compute="_compute_parent_password"
+        compute="_compute_creditsafe_parent_password"
     )
 
     @api.depends("parent_id")
     @api.onchange("parent_id", "creditsafe_use_parent_company")
-    def _compute_parent_url(self):
+    def _compute_creditsafe_parent_url(self):
         for rec in self:
             if rec.parent_id and rec.creditsafe_use_parent_company:
                 rec.creditsafe_parent_url = rec.get_parent_creditsafe_field(
@@ -39,7 +41,7 @@ class ResCompany(models.Model):
 
     @api.depends("parent_id")
     @api.onchange("parent_id", "creditsafe_use_parent_company")
-    def _compute_parent_username(self):
+    def _compute_creditsafe_parent_username(self):
         for rec in self:
             if rec.parent_id and rec.creditsafe_use_parent_company:
                 rec.creditsafe_parent_username = (
@@ -50,7 +52,7 @@ class ResCompany(models.Model):
 
     @api.depends("parent_id")
     @api.onchange("parent_id", "creditsafe_use_parent_company")
-    def _compute_parent_password(self):
+    def _compute_creditsafe_parent_password(self):
         for rec in self:
             if rec.parent_id and rec.creditsafe_use_parent_company:
                 rec.creditsafe_parent_password = (
