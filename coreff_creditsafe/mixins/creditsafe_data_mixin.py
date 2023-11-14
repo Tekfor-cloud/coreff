@@ -228,7 +228,7 @@ class CreditSafeDataMixin(models.AbstractModel):
                 credit_score.get("latestRatingChangeDate", ""),
                 "%Y-%m-%dT%H:%M:%SZ",
             )
-            rec.creditsafe_last_change_date = formattedDatetime
+            rec.creditsafe_last_judgement_date = formattedDatetime
             rec.creditsafe_number_of_directors = len(
                 company.get("directors", {}).get("currentDirectors", {})
             )

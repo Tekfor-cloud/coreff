@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record model="ir.ui.view" id="creditsafe_partner_form">
+    <record model="ir.ui.view"
+        id="creditsafe_partner_form">
         <field name="name">creditsafe.partner.form</field>
         <field name="model">res.partner</field>
-        <field name="inherit_id" ref="coreff_base.coreff_partner_form" />
-        <field name="arch" type="xml">
+        <field name="inherit_id"
+            ref="coreff_base.coreff_partner_form" />
+        <field name="arch"
+            type="xml">
 
-            <xpath expr="//page[@name='internal_notes']" position="before">
-                <field name="creditsafe_visibility" invisible="1" />
-                <page string="CreditSafe" attrs="{'invisible': ['|',('is_company', '=', False), ('creditsafe_visibility', '=', False)]}">
+            <xpath expr="//page[@name='internal_notes']"
+                position="before">
+                <field name="creditsafe_visibility"
+                    invisible="1" />
+                <page string="CreditSafe"
+                    attrs="{'invisible': ['|',('is_company', '=', False), ('creditsafe_visibility', '=', False)]}">
                     <group>
-                        <group col="1" colspan="2">
+                        <group col="1"
+                            colspan="2">
                             <span attrs="{'invisible' : [('creditsafe_last_update', '=', False)]}">
                                 Last updated on:
                                 <field name="creditsafe_last_update" />
@@ -42,14 +49,15 @@
                         </group>
                         <group string="Ratings">
                             <field name="creditsafe_status" />
-                            <field name="creditsafe_rating" widget="percentpie" />
+                            <field name="creditsafe_rating"
+                                widget="percentpie" />
                             <field name="creditsafe_rating_short" />
                             <field name="creditsafe_rating_long" />
                             <field name="creditsafe_credit_limit" />
                             <field name="creditsafe_contract_limit" />
                         </group>
                         <group string="Legal and Financials">
-                            <field name="creditsafe_last_change_date" />
+                            <field name="creditsafe_last_judgement_date" />
                             <field name="creditsafe_number_of_directors" />
                             <field name="creditsafe_share_capital" />
                             <!--CM: Add field for LatestTurnover, Yearenddate, Pretaxprofit, Shareholder Funds, TotalEmployees -->
