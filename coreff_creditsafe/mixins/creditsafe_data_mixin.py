@@ -86,6 +86,7 @@ class CreditSafeDataMixin(models.AbstractModel):
     creditsafe_last_judgement_date = fields.Datetime(
         string="Status Change Date", readonly=True
     )
+    creditsafe_last_ccj_date = fields.Date(string="", readonly=True)
     creditsafe_number_of_directors = fields.Char(
         string="Number of Directors", readonly=True
     )
