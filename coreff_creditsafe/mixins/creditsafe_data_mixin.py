@@ -20,6 +20,7 @@ class CreditSafeDataMixin(models.AbstractModel):
     )
 
     creditsafe_company_id = fields.Char(string="Creditsafe id")
+    creditsafe_raw_data = fields.Text(string="Raw Data", readonly=True)
 
     # Identification
     creditsafe_company_name = fields.Char(
