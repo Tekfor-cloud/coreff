@@ -83,7 +83,7 @@ class CreditSafeDataMixin(models.AbstractModel):
     creditsafe_contract_limit = fields.Integer(readonly=True)
 
     # Judgements
-    creditsafe_last_change_date = fields.Datetime(
+    creditsafe_last_judgement_date = fields.Datetime(
         string="Status Change Date", readonly=True
     )
     creditsafe_number_of_directors = fields.Char(
