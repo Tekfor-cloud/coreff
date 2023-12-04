@@ -5,6 +5,7 @@
 import json
 from odoo import fields, models
 from odoo.exceptions import UserError
+from datetime import datetime
 
 
 class CreditSafeDataMixin(models.AbstractModel):
