@@ -114,6 +114,16 @@ class CreditSafeDataMixin(models.AbstractModel):
         else:
             return False
 
+    def get_creditsafe_pdf(self):
+        self.ensure_one()
+
+        arguments = {}
+        arguments["company_id"] = self.creditsafe_company_id
+        arguments["user_id"] = self.env.user.id
+        arguments["as_pdf"] = True
+        pdf = self.env["coreff.api"].get_company(arguments)
+        return pdf
+
     def update_creditsafe_data(self):
         """
         Update financial information
