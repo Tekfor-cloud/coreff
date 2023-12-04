@@ -240,9 +240,13 @@ class CreditSafeDataMixin(models.AbstractModel):
                 rec.creditsafe_rating = 0
 
             # CM: Format string to datetime to store in Odoo field
-            formattedDatetime = datetime.strptime(
-                credit_score.get("latestRatingChangeDate", ""),
-                "%Y-%m-%dT%H:%M:%SZ",
+            formattedDatetime = (
+                datetime.strptime(
+                    credit_score.get("latestRatingChangeDate", ""),
+                    "%Y-%m-%dT%H:%M:%SZ",
+                )
+                if credit_score.get("latestRatingChangeDate", "")
+                else False
             )
             rec.creditsafe_last_judgement_date = formattedDatetime
             rec.creditsafe_number_of_directors = len(
