@@ -176,14 +176,13 @@ class CreditSafeDataMixin(models.AbstractModel):
             rec.creditsafe_court_registry_description = basic_information.get(
                 "commercialCourt", ""
             )
-            formattedDatetime = (
-                datetime.strptime(
+            try:
+                formattedDatetime = datetime.strptime(
                     basic_information.get("companyRegistrationDate", ""),
                     "%Y-%m-%dT%H:%M:%SZ",
                 )
-                if basic_information.get("companyRegistrationDate", "")
-                else False
-            )
+            except Exception:
+                formattedDatetime = False
             rec.creditsafe_incorporation_date = formattedDatetime
             # CM: Get companySummary>mainActivity>code,description,
             # classification
@@ -240,14 +239,13 @@ class CreditSafeDataMixin(models.AbstractModel):
                 rec.creditsafe_rating = 0
 
             # CM: Format string to datetime to store in Odoo field
-            formattedDatetime = (
-                datetime.strptime(
+            try:
+                formattedDatetime = datetime.strptime(
                     credit_score.get("latestRatingChangeDate", ""),
                     "%Y-%m-%dT%H:%M:%SZ",
                 )
-                if credit_score.get("latestRatingChangeDate", "")
-                else False
-            )
+            except Exception:
+                formattedDatetime = False
             rec.creditsafe_last_judgement_date = formattedDatetime
             rec.creditsafe_number_of_directors = len(
                 company.get("directors", {}).get("currentDirectors", {})
@@ -270,10 +268,13 @@ class CreditSafeDataMixin(models.AbstractModel):
                     .get("profitAndLoss", {})
                     .get("profitBeforeTax", 0)
                 )
-                formattedDatetime = datetime.strptime(
-                    financialStatements[0].get("yearEndDate", ""),
-                    "%Y-%m-%dT%H:%M:%SZ",
-                )
+                try:
+                    formattedDatetime = datetime.strptime(
+                        financialStatements[0].get("yearEndDate", ""),
+                        "%Y-%m-%dT%H:%M:%SZ",
+                    )
+                except Exception:
+                    formattedDatetime = False
                 rec.creditsafe_yearenddate = formattedDatetime
             if len(employeeInfo) > 0:
                 rec.creditsafe_totalemployees = employeeInfo[0].get(
