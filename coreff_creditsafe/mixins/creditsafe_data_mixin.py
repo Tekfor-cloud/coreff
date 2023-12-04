@@ -176,7 +176,7 @@ class CreditSafeDataMixin(models.AbstractModel):
             rec.creditsafe_court_registry_description = basic_information.get(
                 "commercialCourt", ""
             )
-            formattedDatetime = datetime.datetime.strptime(
+            formattedDatetime = datetime.strptime(
                 basic_information.get("companyRegistrationDate", ""),
                 "%Y-%m-%dT%H:%M:%SZ",
             )
@@ -236,7 +236,7 @@ class CreditSafeDataMixin(models.AbstractModel):
                 rec.creditsafe_rating = 0
 
             # CM: Format string to datetime to store in Odoo field
-            formattedDatetime = datetime.datetime.strptime(
+            formattedDatetime = datetime.strptime(
                 credit_score.get("latestRatingChangeDate", ""),
                 "%Y-%m-%dT%H:%M:%SZ",
             )
@@ -262,7 +262,7 @@ class CreditSafeDataMixin(models.AbstractModel):
                     .get("profitAndLoss", {})
                     .get("profitBeforeTax", 0)
                 )
-                formattedDatetime = datetime.datetime.strptime(
+                formattedDatetime = datetime.strptime(
                     financialStatements[0].get("yearEndDate", ""),
                     "%Y-%m-%dT%H:%M:%SZ",
                 )
