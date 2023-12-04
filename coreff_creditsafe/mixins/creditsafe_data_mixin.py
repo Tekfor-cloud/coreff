@@ -176,9 +176,13 @@ class CreditSafeDataMixin(models.AbstractModel):
             rec.creditsafe_court_registry_description = basic_information.get(
                 "commercialCourt", ""
             )
-            formattedDatetime = datetime.strptime(
-                basic_information.get("companyRegistrationDate", ""),
-                "%Y-%m-%dT%H:%M:%SZ",
+            formattedDatetime = (
+                datetime.strptime(
+                    basic_information.get("companyRegistrationDate", ""),
+                    "%Y-%m-%dT%H:%M:%SZ",
+                )
+                if basic_information.get("companyRegistrationDate", "")
+                else False
             )
             rec.creditsafe_incorporation_date = formattedDatetime
             # CM: Get companySummary>mainActivity>code,description,
