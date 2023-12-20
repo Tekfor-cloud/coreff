@@ -38,6 +38,7 @@
                             <field name="creditsafe_company_id" />
                             <field name="creditsafe_company_name" />
                             <field name="creditsafe_legal_form" />
+                            <field name="creditsafe_legal_form_code" />
                             <field name="creditsafe_court_registry_number" />
                             <field name="creditsafe_court_registry_description" />
                             <field name="creditsafe_incorporation_date" />
