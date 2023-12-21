@@ -28,6 +28,9 @@ class CreditSafeDataMixin(models.AbstractModel):
         string="Business Name", readonly=True
     )
     creditsafe_legal_form = fields.Char(string="Legal Form", readonly=True)
+    creditsafe_legal_form_code = fields.Char(
+        string="Legal Form Code", readonly=True
+    )
     creditsafe_court_registry_number = fields.Char(
         string="RCS Number", readonly=True
     )
@@ -147,6 +150,8 @@ class CreditSafeDataMixin(models.AbstractModel):
                 "employeesInformation", {}
             )
 
+            rec.creditsafe_raw_data = json.dumps(company, indent=2)
+
             # CM: Retrieve company address details to override existing
             rec.phone = company_address.get("telephone", "")
             if len(company_address.get("houseNumber", "")) > 0:
@@ -159,6 +164,7 @@ class CreditSafeDataMixin(models.AbstractModel):
                 rec.street = company_address.get("street", "")
             rec.city = company_address.get("city", "")
             rec.zip = company_address.get("postalCode", "")
+            rec.zip_id = False
             rec.state_id = self.get_state(company_address.get("province", ""))
             rec.country_id = self.get_country(
                 company_address.get("country", "")
@@ -170,6 +176,9 @@ class CreditSafeDataMixin(models.AbstractModel):
             rec.creditsafe_legal_form = basic_information.get(
                 "legalForm", {}
             ).get("description", "")
+            rec.creditsafe_legal_form_code = basic_information.get(
+                "legalForm", {}
+            ).get("providerCode", "")
             rec.creditsafe_court_registry_number = basic_information.get(
                 "companyRegistrationNumber", ""
             )
