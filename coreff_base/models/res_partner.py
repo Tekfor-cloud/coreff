@@ -6,11 +6,8 @@ Created on 8 August 2018
 @license: LGPL v3
 """
 
-import logging
-
 from odoo import api, models, fields, _
 from odoo.exceptions import UserError
-from odoo.osv import expression
 
 
 class ResPartner(models.Model):
@@ -50,7 +47,6 @@ class ResPartner(models.Model):
 
     def create_from(self):
         # TODO
-        logging.debug("CREATE FROM CALL")
         return
 
     @api.model
@@ -105,16 +101,50 @@ class ResPartner(models.Model):
             res.append((rec.id, name))
         return res
 
+    # Based on https://github.com/OCA/l10n-spain/blob/14.0/l10n_es_partner/models/res_partner.py
     @api.model
-    def _name_search(
-        self, name, args=None, operator="ilike", limit=100, name_get_uid=None
-    ):
-        name_res = super(ResPartner, self)._name_search(
-            name, args, operator, limit, name_get_uid
+    def _get_coreff_company_code_pattern(self):
+        return (
+            self.env["ir.config_parameter"]
+            .sudo()
+            .get_param("coreff_base.name_pattern", default="")
         )
-        code_res = self._search(
-            [("coreff_company_code", operator, name)],
+
+    # Based on https://github.com/OCA/l10n-spain/blob/14.0/l10n_es_partner/models/res_partner.py
+    @api.model
+    def name_search(self, name, args=None, operator="ilike", limit=100):
+        """Give preference to coreff_company_code on name search, appending
+        the rest of the results after. This has to be done this way, as
+        Odoo overwrites name_search on res.partner in a non inheritable way."""
+        if (
+            "%(coreff_company_code_name)s"
+            in self._get_coreff_company_code_pattern()
+        ):
+            return super().name_search(
+                name=name, args=args, operator=operator, limit=limit
+            )
+        if not args:
+            args = []
+        partner_search_mode = self.env.context.get("res_partner_search_mode")
+        order = (
+            "{}_rank".format(partner_search_mode)
+            if partner_search_mode
+            else None
+        )
+        partners = self.search(
+            [("coreff_company_code", operator, name)] + args,
             limit=limit,
-            access_rights_uid=name_get_uid,
+            order=order,
         )
-        return list(set(list(name_res) + list(code_res)))
+        res = models.lazy_name_get(partners)
+        if limit:
+            limit_rest = limit - len(partners)
+        else:  # pragma: no cover
+            # limit can be 0 or None representing infinite
+            limit_rest = limit
+        if limit_rest or not limit:
+            args += [("id", "not in", partners.ids)]
+            res += super().name_search(
+                name, args=args, operator=operator, limit=limit_rest
+            )
+        return res
