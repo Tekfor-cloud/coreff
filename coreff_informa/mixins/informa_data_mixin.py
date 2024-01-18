@@ -12,6 +12,7 @@ class InformaDataMixin(models.AbstractModel):
     """
 
     _name = "coreff.informa.data.mixin"
+    _description = "Coreff Informa Data Mixin"
 
     informa_visibility = fields.Boolean(
         compute="_compute_informa_visibility",

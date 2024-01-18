@@ -14,6 +14,7 @@ class CreditSafeDataMixin(models.AbstractModel):
     """
 
     _name = "coreff.creditsafe.data.mixin"
+    _description = "Coreff Creditsafe Data Mixin"
 
     creditsafe_visibility = fields.Boolean(
         compute="_compute_creditsafe_visibility",
