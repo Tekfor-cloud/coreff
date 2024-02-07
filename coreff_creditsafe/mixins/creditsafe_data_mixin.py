@@ -165,7 +165,8 @@ class CreditSafeDataMixin(models.AbstractModel):
                 rec.street = company_address.get("street", "")
             rec.city = company_address.get("city", "")
             rec.zip = company_address.get("postalCode", "")
-            rec.zip_id = False
+            if "zip_id" in rec._fields:
+                rec.zip_id = False
             rec.state_id = self.get_state(company_address.get("province", ""))
             rec.country_id = self.get_country(
                 company_address.get("country", "")
