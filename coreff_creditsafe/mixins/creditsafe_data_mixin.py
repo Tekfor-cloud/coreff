@@ -195,7 +195,10 @@ class CreditSafeDataMixin(models.AbstractModel):
             except Exception:
                 formattedDatetime = False
             rec.creditsafe_incorporation_date = (
-                formattedDatetime if formattedDatetime.year >= 1000 else False
+                formattedDatetime
+                if isinstance(formattedDatetime, datetime)
+                and formattedDatetime.year >= 1000
+                else False
             )
             # CM: Get companySummary>mainActivity>code,description,
             # classification
@@ -260,7 +263,10 @@ class CreditSafeDataMixin(models.AbstractModel):
             except Exception:
                 formattedDatetime = False
             rec.creditsafe_last_judgement_date = (
-                formattedDatetime if formattedDatetime.year >= 1000 else False
+                formattedDatetime
+                if isinstance(formattedDatetime, datetime)
+                and formattedDatetime.year >= 1000
+                else False
             )
             rec.creditsafe_number_of_directors = len(
                 company.get("directors", {}).get("currentDirectors", {})
@@ -292,7 +298,8 @@ class CreditSafeDataMixin(models.AbstractModel):
                     formattedDatetime = False
                 rec.creditsafe_yearenddate = (
                     formattedDatetime
-                    if formattedDatetime.year >= 1000
+                    if isinstance(formattedDatetime, datetime)
+                    and formattedDatetime.year >= 1000
                     else False
                 )
             if len(employeeInfo) > 0:
