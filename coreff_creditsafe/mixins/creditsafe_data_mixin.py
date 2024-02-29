@@ -303,9 +303,12 @@ class CreditSafeDataMixin(models.AbstractModel):
                     else False
                 )
             if len(employeeInfo) > 0:
-                rec.creditsafe_totalemployees = employeeInfo[0].get(
-                    "numberOfEmployees", 0
-                )
+                try:
+                    rec.creditsafe_totalemployees = employeeInfo[0].get(
+                        "numberOfEmployees", 0
+                    )
+                except ValueError:
+                    pass
             rec.creditsafe_shareholderfunds = company_summary.get(
                 "latestShareholdersEquityFigure", {}
             ).get("value", 0)
