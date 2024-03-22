@@ -28,7 +28,7 @@ class CreditSafeDataMixin(models.AbstractModel):
     creditsafe_company_name = fields.Char(
         string="Business Name", readonly=True
     )
-    creditsafe_legal_form = fields.Char(string="Legal Form", readonly=True)
+    creditsafe_legal_form = fields.Char(readonly=True)
     creditsafe_legal_form_code = fields.Char(
         string="Legal Form Code", readonly=True
     )
@@ -44,9 +44,7 @@ class CreditSafeDataMixin(models.AbstractModel):
     creditsafe_latest_turnover = fields.Float(
         string="Latest Turnover", readonly=True
     )
-    creditsafe_incorporation_date = fields.Datetime(
-        string="Registration Date", readonly=True
-    )
+    creditsafe_incorporation_date = fields.Datetime(readonly=True)
     creditsafe_activity_code = fields.Char(
         string="Activity Code", readonly=True
     )
