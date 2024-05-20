@@ -268,6 +268,14 @@ class CreditSafeDataMixin(models.AbstractModel):
                 .get("issuedShareCapital", {})
                 .get("value", 0)
             )
+
+            if not rec.creditsafe_share_capital:
+                rec.creditsafe_share_capital = (
+                    company.get("shareCapitalStructure", {})
+                    .get("nominalShareCapital", {})
+                    .get("value", 0)
+                )
+
             # CM: Add latestTurnoverFigure field from companySummary
             rec.creditsafe_latest_turnover = company_summary.get(
                 "latestTurnoverFigure", {}
