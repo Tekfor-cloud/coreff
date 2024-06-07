@@ -4,7 +4,6 @@
 
 import json
 from odoo import fields, models
-from odoo.exceptions import UserError
 from datetime import datetime
 
 
@@ -172,9 +171,13 @@ class CreditSafeDataMixin(models.AbstractModel):
             rec.creditsafe_legal_form_code = basic_information.get(
                 "legalForm", {}
             ).get("providerCode", "")
-            rec.creditsafe_court_registry_number = basic_information.get(
-                "companyRegistrationNumber", ""
-            )
+            rec.creditsafe_court_registry_number = company.get(
+                "additionalInformation", {}
+            ).get("misc",{}).get("rcsRegistration", "")
+            if not rec.creditsafe_court_registry_number:
+                rec.creditsafe_court_registry_number = basic_information.get(
+                    "companyRegistrationNumber", ""
+                )
             rec.creditsafe_court_registry_description = basic_information.get(
                 "commercialCourt", ""
             )
@@ -268,6 +271,14 @@ class CreditSafeDataMixin(models.AbstractModel):
                 .get("issuedShareCapital", {})
                 .get("value", 0)
             )
+
+            if not rec.creditsafe_share_capital:
+                rec.creditsafe_share_capital = (
+                    company.get("shareCapitalStructure", {})
+                    .get("nominalShareCapital", {})
+                    .get("value", 0)
+                )
+
             # CM: Add latestTurnoverFigure field from companySummary
             rec.creditsafe_latest_turnover = company_summary.get(
                 "latestTurnoverFigure", {}
