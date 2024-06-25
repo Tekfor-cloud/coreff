@@ -74,32 +74,15 @@ class ResPartner(models.Model):
             ):
                 raise UserError(_("Company code is required"))
 
-    @api.depends(
-        "is_company",
-        "name",
-        "parent_id.name",
-        "type",
-        "company_name",
-    )
+    @api.depends("coreff_company_code")
     def _compute_display_name(self):
-        diff = dict(
-            show_address=None,
-            show_address_only=None,
-            show_email=None,
-            html_format=None,
-        )
-        names = dict(super(ResPartner, self.with_context(**diff)).name_get())
-        for partner in self:
-            partner.display_name = names.get(partner.id)
+        return super()._compute_display_name()
 
-    def name_get(self):
-        res = []
-        for rec in self:
-            name = rec._get_name()
-            if rec.coreff_company_code:
-                name += f" : {rec.coreff_company_code}"
-            res.append((rec.id, name))
-        return res
+    def _get_name(self):
+        name = super()._get_name()
+        if self.is_company:
+            name = f"{name} : {self.coreff_company_code}"
+        return name
 
     # Based on https://github.com/OCA/l10n-spain/blob/14.0/l10n_es_partner/models/res_partner.py
     @api.model
