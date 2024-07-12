@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.ui.view"
+        id="ellipro_partner_form">
+        <field name="name">ellipro.partner.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id"
+            ref="coreff_base.coreff_partner_form" />
+        <field name="arch"
+            type="xml">
+
+            <xpath expr="//page[@name='internal_notes']"
+                position="before">
+                <field name="ellipro_visibility"
+                    invisible="1" />
+                <page string="Ellipro"
+                    attrs="{'invisible': [('is_company', '=', False)]}">
+                    <group>
+                        <field name="ellipro_identifiant_interne" force_save="1" readonly="1" />
+                        <field name="ellipro_siren" force_save="1" readonly="1" />
+                        <field name="ellipro_siret" force_save="1" readonly="1" />
+                        <field name="ellipro_name" force_save="1" readonly="1" />
+                        <field name="ellipro_business_name" force_save="1" readonly="1" />
+                        <field name="ellipro_trade_name" force_save="1" readonly="1" />
+                        <field name="ellipro_city" force_save="1" readonly="1" />
+                        <field name="ellipro_zipcode" force_save="1" readonly="1" />
+                        <field name="ellipro_street_address" force_save="1" readonly="1" />
+                        <field name="ellipro_phone_number" force_save="1" readonly="1" />
+                        <field name="ellipro_order_result" />
+                        <field name="ellipro_rating_score" widget="percentpie" />
+                        <field name="ellipro_rating_riskclass" widget="percentpie" />
+                        <field name="ellipro_order_product" />
+                        <button string="Make an order"
+                            name="ellipro_order"
+                            type="object"
+                            class="oe_highlight"
+                            confirm="Be careful, this action can override Ellipro fields" />
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="ellipro_captive_form" model="ir.ui.view">
+        <field name="name">ellipro.captive.form</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form" />
+        <field name="arch" type="xml">
+            <group name="coreff_core_fields" position="after">
+                <field name="ellipro_visibility" invisible="1" />
+                <field name="parent_id" invisible="1" />
+                <group string="Ellipro" attrs="{'invisible': [('ellipro_visibility', '=', False)]}">
+                    <field name="ellipro_user" required="1" />
+                    <field name="ellipro_password" password="1" required="1" />
+                    <field name="ellipro_contract" required="1" />
+                    <field name="ellipro_max_hits" />
+                </group>
+            </group>
+        </field>
+    </record>
+
+</odoo>
