@@ -1,18 +1,10 @@
 # ©2018-2019 Article714
 # # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
 
-import base64
-import json
 from requests import Session
 from odoo.tools.config import config
 from odoo import api, models
-import urllib.parse
-import logging
 from .. import ellipro as EP
-import requests
-
-
-logger = logging.getLogger()
 
 
 class CustomSessionProxy(Session):
@@ -44,33 +36,35 @@ class CoreffConnector(models.Model):
 
         data = {"username": username, "password": password}
 
-    # with CustomSessionProxy() as session:
-    #     response = session.post(
-    #         "{}/authenticate".format(url),
-    #         data=json.dumps(data),
-    #         headers=headers,
-    #     )
+    # ? with CustomSessionProxy() as session:
+    # ?     response = session.post(
+    # ?         "{}/authenticate".format(url),
+    # ?         data=json.dumps(data),
+    # ?         headers=headers,
+    # ?     )
 
-    #     if response.status_code == 200:
-    #         content = response.json()
+    # ?     if response.status_code == 200:
+    # ?         content = response.json()
 
-    #         self.env["coreff.credentials"].update_token(
-    #             url, username, content["token"]
-    #         )
-    #         return content["token"]
-    #     if response.status_code == 401:
-    #         return False
-    #     else:
-    #         return self.format_error(response)
+    # ?         self.env["coreff.credentials"].update_token(
+    # ?             url, username, content["token"]
+    # ?         )
+    # ?         return content["token"]
+    # ?     if response.status_code == 401:
+    # ?         return False
+    # ?     else:
+    # ?         return self.format_error(response)
 
     @api.model
     def ellipro_get_companies(self, arguments, retry=False):
         """
-        Get companies
+        Get companies' informations for coreff
         """
 
         search_type = (
-            EP.SearchType.ID if arguments["valueIsCompanyCode"] else EP.SearchType.NAME
+            EP.SearchType.ID
+            if arguments["valueIsCompanyCode"]
+            else EP.SearchType.NAME
         )
         request_type = EP.RequestType.SEARCH.value
         type_attribute = EP.IdType.SRC
@@ -80,9 +74,7 @@ class CoreffConnector(models.Model):
             self.env.user.company_id.ellipro_user,
             self.env.user.company_id.ellipro_password,
         )
-        logger.info(arguments)
         main_only = str(arguments["is_head_office"]).lower()
-        logger.info(main_only)
         search_request = EP.Search(
             search_type,
             arguments["value"],
@@ -99,15 +91,17 @@ class CoreffConnector(models.Model):
     @api.model
     def ellipro_get_company(self, arguments, retry=False):
         """
-        Get company information
+        ?
         """
-        return  # todo
+        return
 
     def format_error(self, response):
         """
         Format api response
         """
         res = {}
-        res["title"] = "[{}] : {}".format(response.status_code, response.reason)
+        res["title"] = "[{}] : {}".format(
+            response.status_code, response.reason
+        )
         res["body"] = response.content
         return {"error": res}

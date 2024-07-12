@@ -2,9 +2,6 @@ import requests
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from enum import Enum
-import logging
-
-logger = logging.getLogger()
 
 
 class IdType(Enum):
@@ -38,7 +35,9 @@ class Admin:
         ET.SubElement(client, "contractId").text = self.contract_id
         ET.SubElement(client, "userId").text = self.user_id
         ET.SubElement(client, "password").text = self.password
-        ET.SubElement(context, "appId", attrib={"version": "1"}).text = "WSRISK"
+        ET.SubElement(context, "appId", attrib={"version": "1"}).text = (
+            "WSRISK"
+        )
         ET.SubElement(context, "date").text = "2013-11-05T17:38:15+01:00"
 
 
@@ -60,7 +59,9 @@ class Search:
         search_criteria = ET.SubElement(request, "searchCriteria")
         if self.search_type == SearchType.ID:
             ET.SubElement(
-                search_criteria, "id", attrib={"type": self.type_attribute.value}
+                search_criteria,
+                "id",
+                attrib={"type": self.type_attribute.value},
             ).text = self.search_text
         elif self.search_type == SearchType.NAME:
             ET.SubElement(search_criteria, "name").text = self.search_text
@@ -68,11 +69,17 @@ class Search:
         ET.SubElement(address, "country", attrib={"code": "FRA"})
 
         search_options = ET.SubElement(request, "searchOptions")
-        ET.SubElement(search_options, "phoneticSearch").text = self.phonetic_search
+        ET.SubElement(search_options, "phoneticSearch").text = (
+            self.phonetic_search
+        )
         ET.SubElement(search_options, "maxHits").text = self.max_hits
         ET.SubElement(search_options, "mainOnly").text = self.main_only
-        ET.SubElement(search_options, "customContent").text = self.custom_content
-        ET.SubElement(search_options, "companyStatus").text = self.company_status
+        ET.SubElement(search_options, "customContent").text = (
+            self.custom_content
+        )
+        ET.SubElement(search_options, "companyStatus").text = (
+            self.company_status
+        )
         ET.SubElement(search_options, "establishmentStatus").text = (
             self.establishment_status
         )
@@ -89,14 +96,18 @@ class Order:
     def set_element(self, root):
         request = ET.SubElement(root, "request")
         ET.SubElement(request, "country", attrib={"code": "FRA"})
-        ET.SubElement(request, "id", attrib={"type": "src"}).text = self.company_id
+        ET.SubElement(request, "id", attrib={"type": "src"}).text = (
+            self.company_id
+        )
         ET.SubElement(
             request,
             "product",
             attrib={"range": self.product_id, "version": self.product_version},
         )
         delivery_options = ET.SubElement(request, "deliveryOptions")
-        ET.SubElement(delivery_options, "outputMethod").text = self.output_method
+        ET.SubElement(delivery_options, "outputMethod").text = (
+            self.output_method
+        )
         ET.SubElement(delivery_options, "format").text = self.format
 
 
@@ -108,9 +119,12 @@ class Catalogue:
     def set_element(self, root):
         request = ET.SubElement(root, "request")
         ET.SubElement(request, "country", attrib={"code": self.country_code})
-        ET.SubElement(request, "id", attrib={"type": "src"}).text = self.company_id
+        ET.SubElement(request, "id", attrib={"type": "src"}).text = (
+            self.company_id
+        )
 
 
+# * send a request to Ellipro and returns an elementTree object
 def search(admin, request, request_type, lang="FR", version="2.2"):
     headers = {"Content-Type": "application/xml"}
     root = ET.Element(
@@ -125,13 +139,10 @@ def search(admin, request, request_type, lang="FR", version="2.2"):
         data=body,
         headers=headers,
     )
-    logger.info(
-        "\n-------------------------------\nellipro_get_companies\n-------------------------------"
-    )
-    logger.info(request_result.text)
     return ET.fromstring(request_result.text)
 
 
+# * search for a lambda company, checks if the request send back an error, then returns True and the error
 def connection_check(admin):
     request_type = RequestType.SEARCH
     request = Search(
@@ -145,13 +156,20 @@ def connection_check(admin):
 
     for search_response in response.iter("svcSearchResponse"):
         error = {}
-        throw_error = search_response.findall("result")[0].attrib["code"] == "ERR"
+        throw_error = (
+            search_response.findall("result")[0].attrib["code"] == "ERR"
+        )
         if throw_error:
-            error["message"] = search_response.findall("result/minorMessage")[0].text
-            error["infos"] = search_response.findall("result/additionalInfo")[0].text
+            error["message"] = search_response.findall("result/minorMessage")[
+                0
+            ].text
+            error["infos"] = search_response.findall("result/additionalInfo")[
+                0
+            ].text
     return throw_error, error
 
 
+# * create a list of suggestions based on a SvcSearch request response in a form of an elementTree object
 def search_response_handle(response):
     suggestions = []
     for establishment in response.iter("establishment"):
@@ -160,22 +178,24 @@ def search_response_handle(response):
         suggestion["coreff_company_code"] = establishment.findall(
             "id[@idName='SIREN']"
         )[0].text
-        suggestion["ellipro_siren"] = establishment.findall("id[@idName='SIREN']")[
-            0
-        ].text
-        suggestion["ellipro_siret"] = establishment.findall("id[@idName='SIRET']")[
-            0
-        ].text
+        suggestion["ellipro_siren"] = establishment.findall(
+            "id[@idName='SIREN']"
+        )[0].text
+        suggestion["ellipro_siret"] = establishment.findall(
+            "id[@idName='SIRET']"
+        )[0].text
         suggestion["ellipro_identifiant_interne"] = establishment.findall(
             "id[@idName='Identifiant interne']"
         )[0].text
         if establishment.findall("communication[@type='phone']") != []:
-            suggestion["phone"] = establishment.findall("communication[@type='phone']")[
-                0
-            ].text
+            suggestion["phone"] = establishment.findall(
+                "communication[@type='phone']"
+            )[0].text
         suggestion["city"] = establishment.findall("address/cityName")[0].text
         suggestion["zip"] = establishment.findall("address/cityCode")[0].text
-        suggestion["street"] = establishment.findall("address/addressLine")[0].text
+        suggestion["street"] = establishment.findall("address/addressLine")[
+            0
+        ].text
         if establishment.findall("name[@type='businessname']") != []:
             suggestion["ellipro_business_name"] = establishment.findall(
                 "name[@type='businessname']"
@@ -184,10 +204,12 @@ def search_response_handle(response):
             suggestion["ellipro_trade_name"] = establishment.findall(
                 "name[@type='tradename']"
             )[0].text
-        suggestion["ellipro_city"] = establishment.findall("address/cityName")[0].text
-        suggestion["ellipro_zipcode"] = establishment.findall("address/cityCode")[
+        suggestion["ellipro_city"] = establishment.findall("address/cityName")[
             0
         ].text
+        suggestion["ellipro_zipcode"] = establishment.findall(
+            "address/cityCode"
+        )[0].text
         suggestion["ellipro_street_address"] = establishment.findall(
             "address/addressLine"
         )[0].text
@@ -195,17 +217,5 @@ def search_response_handle(response):
             suggestion["ellipro_phone_number"] = establishment.findall(
                 "communication[@type='phone']"
             )[0].text
-        # todo suggestion["ellipro_company_id"] = company.get("id", "")
-        # todo suggestion["country_id"] = company.get("country", "")
         suggestions.append(suggestion)
     return suggestions
-
-
-if __name__ == "__main__":
-
-    admin = Admin("53560", "NN448142", "#Pa55word")
-
-    has_error, error = connection_check(admin)
-    if has_error:
-        print(error)
-    # ?ET.dump(response)

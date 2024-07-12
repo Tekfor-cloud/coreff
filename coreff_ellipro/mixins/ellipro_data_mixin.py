@@ -2,15 +2,10 @@
 # ©2018-2019 Article714
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
 
-import json
 from odoo import fields, models
-from datetime import datetime
-import logging
 from .. import ellipro as EP
 import xml.etree.ElementTree as ET
 import requests
-
-logger = logging.getLogger()
 
 
 class ElliproDataMixin(models.AbstractModel):
@@ -42,8 +37,9 @@ class ElliproDataMixin(models.AbstractModel):
     def _compute_ellipro_visibility(self):
         company = self.env.user.company_id
         for rec in self:
-            rec.ellipro_visibility = company.coreff_connector_id == self.env.ref(
-                "coreff_ellipro.coreff_connector_ellipro_api"
+            rec.ellipro_visibility = (
+                company.coreff_connector_id
+                == self.env.ref("coreff_ellipro.coreff_connector_ellipro_api")
             )
 
     def ellipro_order(self):
@@ -58,44 +54,21 @@ class ElliproDataMixin(models.AbstractModel):
             self.env.user.company_id.ellipro_password,
         )
 
-        headers = {"Content-Type": "application/xml"}
-
-        root = ET.Element(
-            f"{request_type}Request", attrib={"lang": "FR", "version": "2.2"}
-        )
-        admin.set_element(root)
-        order_request.set_element(root)
-        body = ET.tostring(root)
-
-        request = requests.post(
-            f"https://services-test.data-access-gateway.com/1/rest/{request_type}",
-            data=body,
-            headers=headers,
-        )
-
-        logger.info(
-            "\n-------------------------------\nellipro_order\n-------------------------------"
-        )
-        logger.info(request.text)
-        result = ET.fromstring(request.text)
+        result = EP.search(admin, order_request, request_type)
         for response in result.findall("response"):
-            name = response.findall("intlReport/header/report/reportId")[0].text
+            name = response.findall("intlReport/header/report/reportId")[
+                0
+            ].text
             price = (
-                response.findall("intlReport/header/report/defaultCurrencyUnit")[0].text
+                response.findall(
+                    "intlReport/header/report/defaultCurrencyUnit"
+                )[0].text
                 + " "
-                + response.findall("intlReport/header/report/defaultCurrency")[0].text
+                + response.findall("intlReport/header/report/defaultCurrency")[
+                    0
+                ].text
             )
             self.ellipro_order_result = name + " pour le prix de " + price
-            logger.info(
-                response.findall(
-                    "intlReport/assessmentData/score/value[@type='score']"
-                )[0].text
-            )
-            logger.info(
-                response.findall(
-                    "intlReport/assessmentData/score/value[@type='riskclass']"
-                )[0].text
-            )
             self.ellipro_rating_score = (
                 int(
                     response.findall(
