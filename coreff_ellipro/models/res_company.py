@@ -18,13 +18,3 @@ class ResCompany(models.Model):
             rec.ellipro_visibility = rec.coreff_connector_id == self.env.ref(
                 "coreff_ellipro.coreff_connector_ellipro_api"
             )
-
-
-# ?    @api.depends("ellipro_user")
-# ?    def compute_ellipro_connection(self):
-# ?        admin = EP.Admin(
-# ?            self.ellipro_contract, self.ellipro_user, self.ellipro_password
-# ?        )
-# ?        has_error, error = EP.connection_check(admin)
-# ?        if has_error:
-# ?            print(error)

@@ -142,33 +142,6 @@ def search(admin, request, request_type, lang="FR", version="2.2"):
     return ET.fromstring(request_result.text)
 
 
-def connection_check(admin):
-    """Check if auth creds are correct, return a Boolean and the error message."""
-    request_type = RequestType.SEARCH
-    request = Search(
-        SearchType.NAME,
-        "Bonduelle",
-        "1",
-        IdType.ESTB,
-    )
-    response = search(admin, request, request_type.value)
-    response = ET.fromstring(response)
-
-    for search_response in response.iter("svcSearchResponse"):
-        error = {}
-        throw_error = (
-            search_response.findall("result")[0].attrib["code"] == "ERR"
-        )
-        if throw_error:
-            error["message"] = search_response.findall("result/minorMessage")[
-                0
-            ].text
-            error["infos"] = search_response.findall("result/additionalInfo")[
-                0
-            ].text
-    return throw_error, error
-
-
 def search_response_handle(response):
     """Parse a SvcSearch request response and return a list of dictionaries."""
     suggestions = []
