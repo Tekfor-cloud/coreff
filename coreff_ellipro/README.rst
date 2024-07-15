@@ -1,10 +1,8 @@
-CoreFF - CreditSafe
+CoreFF - Ellipro
 ===================
 
 The aim of this module is to get financial informations
-from CreditSafe and add them to res_partner model.
+from Ellipro and add them to res_partner model.
 
-Of course, you need a CreditSafe account and set its properties
+Of course, you need a Ellipro account and set its properties
 into "financial informations" configuration menu.
-
-**Credits**: Article 714, Infibail, Credit Safe, Chris Mann (Open User Systems)

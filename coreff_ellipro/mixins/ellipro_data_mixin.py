@@ -1,11 +1,5 @@
-# -*- coding: utf-8 -*-
-# ©2018-2019 Article714
-# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
-
 from odoo import fields, models
 from .. import ellipro as EP
-import xml.etree.ElementTree as ET
-import requests
 
 
 class ElliproDataMixin(models.AbstractModel):
@@ -55,31 +49,9 @@ class ElliproDataMixin(models.AbstractModel):
         )
 
         result = EP.search(admin, order_request, request_type)
-        for response in result.findall("response"):
-            name = response.findall("intlReport/header/report/reportId")[
-                0
-            ].text
-            price = (
-                response.findall(
-                    "intlReport/header/report/defaultCurrencyUnit"
-                )[0].text
-                + " "
-                + response.findall("intlReport/header/report/defaultCurrency")[
-                    0
-                ].text
-            )
-            self.ellipro_order_result = name + " pour le prix de " + price
-            self.ellipro_rating_score = (
-                int(
-                    response.findall(
-                        "intlReport/assessmentData/score/value[@type='score']"
-                    )[0].text
-                )
-                * 10
-            )  # * rating goes from 0 to 10, rating*10 for % value
-            rating_riskclass = response.findall(
-                "intlReport/assessmentData/score/value[@type='riskclass']"
-            )[0].text
-            self.ellipro_rating_riskclass = (
-                (4 - (ord(rating_riskclass) - 65)) / 4 * 100
-            )  # * letter given goes from A for best to E for worst, converted to 0-4 scale then to %
+        parsed_result = EP.parse_order(result)
+        self.ellipro_order_result = parsed_result["ellipro_order_result"]
+        self.ellipro_rating_score = parsed_result["ellipro_rating_score"]
+        self.ellipro_rating_riskclass = parsed_result[
+            "ellipro_rating_riskclass"
+        ]

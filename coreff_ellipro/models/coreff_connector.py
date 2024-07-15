@@ -1,6 +1,3 @@
-# ©2018-2019 Article714
-# # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
-
 from requests import Session
 from odoo.tools.config import config
 from odoo import api, models
@@ -22,38 +19,6 @@ class CustomSessionProxy(Session):
 
 class CoreffConnector(models.Model):
     _inherit = "coreff.connector"
-
-    @api.model
-    def ellipro_authenticate(self, url, username, password):
-        """
-        Auto authent to access Ellipro
-        """
-
-        headers = {
-            "accept": "application/json",
-            "Content-type": "application/json",
-        }
-
-        data = {"username": username, "password": password}
-
-    # ? with CustomSessionProxy() as session:
-    # ?     response = session.post(
-    # ?         "{}/authenticate".format(url),
-    # ?         data=json.dumps(data),
-    # ?         headers=headers,
-    # ?     )
-
-    # ?     if response.status_code == 200:
-    # ?         content = response.json()
-
-    # ?         self.env["coreff.credentials"].update_token(
-    # ?             url, username, content["token"]
-    # ?         )
-    # ?         return content["token"]
-    # ?     if response.status_code == 401:
-    # ?         return False
-    # ?     else:
-    # ?         return self.format_error(response)
 
     @api.model
     def ellipro_get_companies(self, arguments, retry=False):

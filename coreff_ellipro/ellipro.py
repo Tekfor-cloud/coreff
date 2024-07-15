@@ -124,8 +124,8 @@ class Catalogue:
         )
 
 
-# * send a request to Ellipro and returns an elementTree object
 def search(admin, request, request_type, lang="FR", version="2.2"):
+    """Send XML request to Ellipro and return an elementTree object."""
     headers = {"Content-Type": "application/xml"}
     root = ET.Element(
         f"{request_type}Request", attrib={"lang": lang, "version": version}
@@ -142,8 +142,8 @@ def search(admin, request, request_type, lang="FR", version="2.2"):
     return ET.fromstring(request_result.text)
 
 
-# * search for a lambda company, checks if the request send back an error, then returns True and the error
 def connection_check(admin):
+    """Check if auth creds are correct, return a Boolean and the error message."""
     request_type = RequestType.SEARCH
     request = Search(
         SearchType.NAME,
@@ -169,8 +169,8 @@ def connection_check(admin):
     return throw_error, error
 
 
-# * create a list of suggestions based on a SvcSearch request response in a form of an elementTree object
 def search_response_handle(response):
+    """Parse a SvcSearch request response and return a list of dictionaries."""
     suggestions = []
     for establishment in response.iter("establishment"):
         suggestion = {}
@@ -219,3 +219,37 @@ def search_response_handle(response):
             )[0].text
         suggestions.append(suggestion)
     return suggestions
+
+
+def parse_order(order):
+    """Parse a SvcOnlineOrder request response and return a dictionary."""
+    parsed_order = {}
+    for response in order.findall("response"):
+        name = response.findall("intlReport/header/report/reportId")[0].text
+        price = (
+            response.findall("intlReport/header/report/defaultCurrencyUnit")[
+                0
+            ].text
+            + " "
+            + response.findall("intlReport/header/report/defaultCurrency")[
+                0
+            ].text
+        )
+        parsed_order["ellipro_order_result"] = (
+            name + " pour le prix de " + price
+        )
+        parsed_order["ellipro_rating_score"] = (
+            int(
+                response.findall(
+                    "intlReport/assessmentData/score/value[@type='score']"
+                )[0].text
+            )
+            * 10
+        )  # * rating goes from 0 to 10, rating*10 for % value
+        rating_riskclass = response.findall(
+            "intlReport/assessmentData/score/value[@type='riskclass']"
+        )[0].text
+        parsed_order["ellipro_rating_riskclass"] = (
+            (4 - (ord(rating_riskclass) - 65)) / 4 * 100
+        )  # * letter given goes from A for best to E for worst, converted to 0-4 scale then to %
+    return parsed_order

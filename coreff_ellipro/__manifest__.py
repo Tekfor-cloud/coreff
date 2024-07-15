@@ -1,9 +1,3 @@
-# @author: J. Carette
-# @author: C. Guychard
-# @author: Chris Mann (Open User Systems)
-# @copyright: ©2018-2019 Article 714
-# @license: LGPL v3
-
 {
     "name": "CoreFF: Ellipro",
     "version": "14.0.1.1.0",
