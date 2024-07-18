@@ -1,5 +1,6 @@
 from odoo import fields, models
 from .. import pappers as PA
+from odoo.exceptions import UserError
 
 
 class PappersDataMixin(models.AbstractModel):
@@ -24,6 +25,10 @@ class PappersDataMixin(models.AbstractModel):
     def retrieve_directors(self):
         """Create new partners linked to the company."""
         for rec in self:
+            if len(rec.coreff_company_code) != 14:
+                raise UserError(
+                    "Merci de remplacer le n° de SIREN par un n° de SIRET.\n Vous pouvez simplement ajouter un 0 à la fin du n° de SIREN afin d'obtenir les différents n° de SIRET"
+                )
             directors = PA.search_directors(
                 self.env.user.company_id.pappers_api_token, rec.coreff_company_code
             )
