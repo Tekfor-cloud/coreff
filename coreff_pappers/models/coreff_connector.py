@@ -29,10 +29,14 @@ class CoreffConnector(models.Model):
         search_value = arguments["value"]
         api_token = self.env.user.company_id.pappers_api_token
         if arguments["valueIsCompanyCode"]:
-            response = PA.search_code(api_token, search_value)
+            response = PA.search_code(
+                api_token, search_value, arguments["is_head_office"]
+            )
             return response
         else:
-            response = PA.search_name(api_token, search_value)
+            response = PA.search_name(
+                api_token, search_value, arguments["is_head_office"]
+            )
         return response
 
     @api.model
