@@ -157,9 +157,11 @@ class CreditSafeDataMixin(models.AbstractModel):
             rec.zip = company_address.get("postalCode", "")
             if "zip_id" in rec._fields:
                 rec.zip_id = False
-            rec.state_id = self.get_state(company_address.get("province", ""))
             rec.country_id = self.get_country(
                 company_address.get("country", "")
+            )
+            rec.state_id = self.get_state(
+                company_address.get("province", ""), rec.country_id.id
             )
 
             rec.creditsafe_company_name = company_summary.get(
@@ -171,9 +173,11 @@ class CreditSafeDataMixin(models.AbstractModel):
             rec.creditsafe_legal_form_code = basic_information.get(
                 "legalForm", {}
             ).get("providerCode", "")
-            rec.creditsafe_court_registry_number = company.get(
-                "additionalInformation", {}
-            ).get("misc",{}).get("rcsRegistration", "")
+            rec.creditsafe_court_registry_number = (
+                company.get("additionalInformation", {})
+                .get("misc", {})
+                .get("rcsRegistration", "")
+            )
             if not rec.creditsafe_court_registry_number:
                 rec.creditsafe_court_registry_number = basic_information.get(
                     "companyRegistrationNumber", ""
@@ -369,6 +373,9 @@ class CreditSafeDataMixin(models.AbstractModel):
                 telephone = address.get("telephone", "")
             else:
                 telephone = self.phone
+
+            country_id = self.get_country(address.get("country", ""))
+            state_id = self.get_state(address.get("province", ""), country_id)
             self.env["res.partner"].create(
                 {
                     "name": director.get("firstName", "")
@@ -384,8 +391,8 @@ class CreditSafeDataMixin(models.AbstractModel):
                     "phone": telephone,
                     "type": "other",
                     "title": self.get_title(director.get("title", "")),
-                    "state_id": self.get_state(address.get("province", "")),
-                    "country_id": self.get_country(address.get("country", "")),
+                    "state_id": country_id,
+                    "country_id": state_id,
                 }
             )
             return True
@@ -405,12 +412,15 @@ class CreditSafeDataMixin(models.AbstractModel):
         else:
             return False
 
-    def get_state(self, state):
+    def get_state(self, state, country_id):
         # CM: Search for res.country that matches the submitted string
         if len(state) > 0:
-            result = self.env["res.country.state"].search(
-                [("name", "=", state)]
+            domain = (
+                [("name", "=", state), ("country_id", "=", country_id)]
+                if country_id
+                else [("name", "=", state)]
             )
+            result = self.env["res.country.state"].search(domain)
             return result.id
         else:
             return False
