@@ -6,11 +6,9 @@ from odoo.exceptions import UserError
 
 def clean_code(code):
     """Removes any non-numerical character and returns a string"""
-    numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
     cleaned_code = ""
-
     for character in code:
-        if character in numbers:
+        if character.isdigit():
             cleaned_code += character
     return cleaned_code
 
