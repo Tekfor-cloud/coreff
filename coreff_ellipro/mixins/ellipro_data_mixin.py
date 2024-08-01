@@ -58,26 +58,17 @@ class ElliproDataMixin(models.AbstractModel):
             response = EP.search(admin, search_request, request_type)
             response = EP.search_response_handle(response)[0]
 
-            if "ellipro_identifiant_interne" in response:
-                self.ellipro_identifiant_interne = response[
-                    "ellipro_identifiant_interne"
-                ]
-            if "ellipro_siret" in response:
-                self.ellipro_siret = response["ellipro_siret"]
-            if "ellipro_siren" in response:
-                self.ellipro_siren = response["ellipro_siren"]
-            if "ellipro_business_name" in response:
-                self.ellipro_business_name = response["ellipro_business_name"]
-            if "ellipro_trade_name" in response:
-                self.ellipro_trade_name = response["ellipro_trade_name"]
-            if "city" in response:
-                self.ellipro_city = response["city"]
-            if "zip" in response:
-                self.ellipro_zipcode = response["zip"]
-            if "street" in response:
-                self.ellipro_street_address = response["street"]
-            if "phone" in response:
-                self.ellipro_phone_number = response["phone"]
+            self.ellipro_siret = response.get(
+                "ellipro_identifiant_interne", False
+            )
+            self.ellipro_siret = response.get("ellipro_siret", False)
+            self.ellipro_siret = response.get("ellipro_siren", False)
+            self.ellipro_siret = response.get("ellipro_business_name", False)
+            self.ellipro_siret = response.get("ellipro_trade_name", False)
+            self.ellipro_siret = response.get("city", False)
+            self.ellipro_siret = response.get("zip", False)
+            self.ellipro_siret = response.get("street", False)
+            self.ellipro_siret = response.get("phone", False)
 
     def ellipro_order(self):
         request_type = EP.RequestType.ONLINEORDER.value
