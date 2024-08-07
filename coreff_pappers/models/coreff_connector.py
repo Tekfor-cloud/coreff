@@ -46,7 +46,7 @@ class CoreffConnector(models.Model):
         """
         return
 
-    def format_error(self, response):
+    def pappers_format_error(self, response):
         """
         Format api response
         """

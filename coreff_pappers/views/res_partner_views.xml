@@ -19,7 +19,7 @@
                     <group>
                         <field name="pappers_identifiant_interne" force_save="1" readonly="1" />
                         <field name="pappers_note" />
-                        <field name="pappers_json" widget="json" />
+                        <field name="pappers_json" />
                         <button string="Get company's infos" name="pappers_get_infos" type="object"
                             attrs="{'invisible': [('pappers_visibility', '=', True)]}" />
                         <button string="Retrieve Directors"

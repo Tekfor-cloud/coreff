@@ -1,16 +1,13 @@
 import requests
 import json
 import base64
-from odoo.exceptions import UserError
 
 
-def clean_code(code):
+def check_code(code):
     """Removes any non-numerical character and returns a string"""
-    cleaned_code = ""
     for character in code:
-        if character.isdigit():
-            cleaned_code += character
-    return cleaned_code
+        if not character.isdigit():
+            raise Exception("Non-numerical character(s) in provided code")
 
 
 def search_report(api_token, company_code, code_type):
@@ -33,12 +30,9 @@ def search_report(api_token, company_code, code_type):
         return base64.b64encode(pdf.content)
     else:
         error_text = (
-            "Erreur "
-            + str(response["statusCode"])
-            + " :\n"
-            + response["error"]
+            "Erreur " + str(response["statusCode"]) + " :\n" + response["error"]
         )
-        raise UserError(error_text)
+        raise Exception(error_text)
 
 
 def search_directors(api_token, search_value):
@@ -72,7 +66,7 @@ def search_name(api_token, search_value, head_office_only):
 
 
 def search_infos(api_token, search_value):
-    search_value = clean_code(search_value)
+    check_code(search_value)
     headers = {"Content": "application/json"}
     request = (
         "https://api.pappers.fr/v2/entreprise?api_token="
@@ -87,7 +81,7 @@ def search_infos(api_token, search_value):
 
 def search_code(api_token, search_value, head_office_only):
     """Send a siret/siren search request and returns companies' infos as a list of dictionaries"""
-    search_value = clean_code(search_value)
+    check_code(search_value)
     headers = {"Content": "application/json"}
     suggestions = []
     if 9 <= len(search_value) < 14:
@@ -117,12 +111,9 @@ def parse_search_directors(response_object):
     response = json.loads(response_object.text)
     if response_object.status_code != 200:
         error_text = (
-            "Erreur "
-            + str(response["statusCode"])
-            + " :\n"
-            + response["error"]
+            "Erreur " + str(response["statusCode"]) + " :\n" + response["error"]
         )
-        raise UserError(error_text)
+        raise Exception(error_text)
     for result in response["representants"]:
         director = {}
         director["name"] = result["nom_complet"]
@@ -153,12 +144,9 @@ def parse_search_name(response_object):
         return suggestions
     except:
         error_text = (
-            "Erreur "
-            + str(response["statusCode"])
-            + " :\n"
-            + response["error"]
+            "Erreur " + str(response["statusCode"]) + " :\n" + response["error"]
         )
-        raise UserError(error_text)
+        raise Exception(error_text)
 
 
 def parse_search_siren(response_object, head_office_only):
@@ -185,12 +173,9 @@ def parse_search_siren(response_object, head_office_only):
         return suggestions
     except:
         error_text = (
-            "Erreur "
-            + str(response["statusCode"])
-            + " :\n"
-            + response["error"]
+            "Erreur " + str(response["statusCode"]) + " :\n" + response["error"]
         )
-        raise UserError(error_text)
+        raise Exception(error_text)
 
 
 def parse_search_siret(response_object):
@@ -213,12 +198,9 @@ def parse_search_siret(response_object):
         return suggestions
     except:
         error_text = (
-            "Erreur "
-            + str(response["statusCode"])
-            + " :\n"
-            + response["error"]
+            "Erreur " + str(response["statusCode"]) + " :\n" + response["error"]
         )
-        raise UserError(error_text)
+        raise Exception(error_text)
 
 
 def affichage_json_recursif(response, n=0, parent="", value=""):
