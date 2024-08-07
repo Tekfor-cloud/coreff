@@ -55,7 +55,7 @@ class PappersDataMixin(models.AbstractModel):
                 self.env.user.company_id.pappers_api_token,
                 rec.coreff_company_code,
             )
-            self.pappers_json = infos["json"]
+            self.pappers_json = infos
 
     def pappers_get_report(self):
         for rec in self:
