@@ -1,6 +1,5 @@
-from odoo import fields, models
+from odoo import fields, models, _
 from .. import pappers as PA
-from odoo.exceptions import UserError
 
 
 class PappersDataMixin(models.AbstractModel):
@@ -13,9 +12,8 @@ class PappersDataMixin(models.AbstractModel):
 
     pappers_visibility = fields.Boolean(compute="_compute_pappers_visibility")
 
-    pappers_identifiant_interne = fields.Char()
-    pappers_note = fields.Char()
-    pappers_json = fields.Text()
+    pappers_internal_id = fields.Char()
+    pappers_data = fields.Text()
 
     def _compute_pappers_visibility(self):
         company = self.env.user.company_id
@@ -28,8 +26,10 @@ class PappersDataMixin(models.AbstractModel):
         """Create new partners linked to the company."""
         for rec in self:
             if len(rec.coreff_company_code) != 14:
-                raise UserError(
-                    "Merci de remplacer le n° de SIREN par un n° de SIRET.\n Vous pouvez simplement ajouter un 0 à la fin du n° de SIREN afin d'obtenir les différents n° de SIRET"
+                raise Exception(
+                    _(
+                        "Please replaece the SIREN code for a SIRET one. To proceed, you can just add a 0 at the end of the SIREN number to get all different SIRET numbers."
+                    )
                 )
             directors = PA.search_directors(
                 self.env.user.company_id.pappers_api_token,
@@ -55,7 +55,7 @@ class PappersDataMixin(models.AbstractModel):
                 self.env.user.company_id.pappers_api_token,
                 rec.coreff_company_code,
             )
-            self.pappers_json = infos
+            self.pappers_data = infos
 
     def pappers_get_report(self):
         for rec in self:
@@ -64,7 +64,7 @@ class PappersDataMixin(models.AbstractModel):
             elif 9 <= len(rec.coreff_company_code) < 14:
                 code_type = "siren"
             else:
-                raise UserError("Numéro de SIREN / SIRET invalide.")
+                raise Exception(_("SIREN / SIRET code invalid."))
             b64_pdf = PA.search_report(
                 self.env.user.company_id.pappers_api_token,
                 rec.coreff_company_code,

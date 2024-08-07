@@ -17,9 +17,8 @@
                 <page string="Pappers"
                     attrs="{'invisible': [('is_company', '=', False)]}">
                     <group>
-                        <field name="pappers_identifiant_interne" force_save="1" readonly="1" />
-                        <field name="pappers_note" />
-                        <field name="pappers_json" />
+                        <field name="pappers_internal_id" force_save="1" readonly="1" />
+                        <field name="pappers_data" />
                         <button string="Get company's infos" name="pappers_get_infos" type="object"
                             attrs="{'invisible': [('pappers_visibility', '=', True)]}" />
                         <button string="Retrieve Directors"

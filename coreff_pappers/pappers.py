@@ -4,7 +4,7 @@ import base64
 
 
 def check_code(code):
-    """Removes any non-numerical character and returns a string"""
+    """Raises an error when non-numerical character are in the provided code"""
     for character in code:
         if not character.isdigit():
             raise Exception("Non-numerical character(s) in provided code")
@@ -76,7 +76,7 @@ def search_infos(api_token, search_value):
     )
     response = requests.get(request, headers=headers)
     response = json.loads(response.text)
-    return affichage_json_recursif(response)
+    return json_to_tree(response)
 
 
 def search_code(api_token, search_value, head_office_only):
@@ -138,8 +138,8 @@ def parse_search_name(response_object):
             suggestion["street2"] = result["siege"]["adresse_ligne_2"]
             suggestion["city"] = result["siege"]["ville"]
             suggestion["zip"] = result["siege"]["code_postal"]
-            pappers_json = json.loads(response_object.text)
-            suggestion["pappers_json"] = affichage_json_recursif(pappers_json)
+            pappers_data = json.loads(response_object.text)
+            suggestion["pappers_data"] = json_to_tree(pappers_data)
             suggestions.append(suggestion)
         return suggestions
     except:
@@ -164,8 +164,8 @@ def parse_search_siren(response_object, head_office_only):
             suggestion["country_id"] = establishment["code_pays"]
             suggestion["name"] = response["nom_entreprise"]
             suggestion["vat"] = response["numero_tva_intracommunautaire"]
-            pappers_json = json.loads(response_object.text)
-            suggestion["pappers_json"] = affichage_json_recursif(pappers_json)
+            pappers_data = json.loads(response_object.text)
+            suggestion["pappers_data"] = json_to_tree(pappers_data)
             if (
                 head_office_only == False or establishment["siege"] == True
             ) and establishment["etablissement_cesse"] == False:
@@ -192,8 +192,8 @@ def parse_search_siret(response_object):
         suggestion["zip"] = response["etablissement"]["code_postal"]
         suggestion["country_id"] = response["etablissement"]["code_pays"]
         suggestion["vat"] = response["numero_tva_intracommunautaire"]
-        pappers_json = json.loads(response_object.text)
-        suggestion["pappers_json"] = affichage_json_recursif(pappers_json)
+        pappers_data = json.loads(response_object.text)
+        suggestion["pappers_data"] = json_to_tree(pappers_data)
         suggestions.append(suggestion)
         return suggestions
     except:
@@ -203,17 +203,17 @@ def parse_search_siret(response_object):
         raise Exception(error_text)
 
 
-def affichage_json_recursif(response, n=0, parent="", value=""):
+def json_to_tree(response, n=0, parent="", value=""):
     if not isinstance(response, list) and not isinstance(response, dict):
         return n * "\t" + str(parent) + " = " + str(response) + "\n"
     elif isinstance(response, list) and len(response) == 1:
-        return affichage_json_recursif(response[0], n + 1, response, value)
+        return json_to_tree(response[0], n + 1, response, value)
     elif isinstance(response, list):
         for element in response:
-            value += affichage_json_recursif(element, n + 1, response)
+            value += json_to_tree(element, n + 1, response)
         return value
     elif isinstance(response, dict):
         for element in response:
-            value += affichage_json_recursif(response[element], n + 1, element)
+            value += json_to_tree(response[element], n + 1, element)
         return value
     return value
