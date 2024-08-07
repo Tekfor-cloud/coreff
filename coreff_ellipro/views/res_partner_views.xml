@@ -17,10 +17,11 @@
                 <page string="Ellipro"
                     attrs="{'invisible': [('is_company', '=', False)]}">
                     <group>
+                        <button string="Get company's infos" name="ellipro_get_infos" type="object"
+                            attrs="{'invisible': [('ellipro_visibility', '=', True)]}" />
                         <field name="ellipro_identifiant_interne" force_save="1" readonly="1" />
                         <field name="ellipro_siren" force_save="1" readonly="1" />
                         <field name="ellipro_siret" force_save="1" readonly="1" />
-                        <field name="ellipro_name" force_save="1" readonly="1" />
                         <field name="ellipro_business_name" force_save="1" readonly="1" />
                         <field name="ellipro_trade_name" force_save="1" readonly="1" />
                         <field name="ellipro_city" force_save="1" readonly="1" />
