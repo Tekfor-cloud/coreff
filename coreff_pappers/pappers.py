@@ -2,7 +2,6 @@ import requests
 import json
 import base64
 from odoo.exceptions import UserError
-import logging
 
 
 def clean_code(code):
@@ -34,7 +33,10 @@ def search_report(api_token, company_code, code_type):
         return base64.b64encode(pdf.content)
     else:
         error_text = (
-            "Erreur " + str(response["statusCode"]) + " :\n" + response["error"]
+            "Erreur "
+            + str(response["statusCode"])
+            + " :\n"
+            + response["error"]
         )
         raise UserError(error_text)
 
@@ -115,7 +117,10 @@ def parse_search_directors(response_object):
     response = json.loads(response_object.text)
     if response_object.status_code != 200:
         error_text = (
-            "Erreur " + str(response["statusCode"]) + " :\n" + response["error"]
+            "Erreur "
+            + str(response["statusCode"])
+            + " :\n"
+            + response["error"]
         )
         raise UserError(error_text)
     for result in response["representants"]:
@@ -148,7 +153,10 @@ def parse_search_name(response_object):
         return suggestions
     except:
         error_text = (
-            "Erreur " + str(response["statusCode"]) + " :\n" + response["error"]
+            "Erreur "
+            + str(response["statusCode"])
+            + " :\n"
+            + response["error"]
         )
         raise UserError(error_text)
 
@@ -177,7 +185,10 @@ def parse_search_siren(response_object, head_office_only):
         return suggestions
     except:
         error_text = (
-            "Erreur " + str(response["statusCode"]) + " :\n" + response["error"]
+            "Erreur "
+            + str(response["statusCode"])
+            + " :\n"
+            + response["error"]
         )
         raise UserError(error_text)
 
@@ -202,7 +213,10 @@ def parse_search_siret(response_object):
         return suggestions
     except:
         error_text = (
-            "Erreur " + str(response["statusCode"]) + " :\n" + response["error"]
+            "Erreur "
+            + str(response["statusCode"])
+            + " :\n"
+            + response["error"]
         )
         raise UserError(error_text)
 
