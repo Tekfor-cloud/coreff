@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="coreff_connector_pappers_api"
+        model="coreff.connector">
+        <field name="name">Pappers</field>
+        <field name="autocomplete_fields">name,coreff_company_code</field>
+        <field name="get_companies_def">self.pappers_get_companies(arguments)</field>
+        <field name="get_company_def">self.pappers_get_company(arguments)</field>
+    </record>
+</odoo>
