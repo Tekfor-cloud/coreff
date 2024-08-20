@@ -6,7 +6,7 @@
     "license": "LGPL-3",
     "website": "https://www.article714.org",
     "summary": "",
-    "depends": ["coreff_base", "web"],
+    "depends": ["coreff_base", "web", "base_iso3166"],
     "data": [
         "views/res_company_views.xml",
         "views/res_partner_views.xml",

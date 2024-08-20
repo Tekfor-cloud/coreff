@@ -13,19 +13,13 @@ class ElliproDataMixin(models.AbstractModel):
     ellipro_visibility = fields.Boolean(compute="_compute_ellipro_visibility")
 
     ellipro_identifiant_interne = fields.Char()
-    ellipro_siret = fields.Char()
-    ellipro_siren = fields.Char()
-    ellipro_business_name = fields.Char()
-    ellipro_trade_name = fields.Char()
-    ellipro_city = fields.Char()
-    ellipro_zipcode = fields.Char()
-    ellipro_street_address = fields.Char()
-    ellipro_phone_number = fields.Char()
 
     ellipro_order_result = fields.Char()
     ellipro_rating_score = fields.Integer()
     ellipro_rating_riskclass = fields.Integer()
-    ellipro_order_product = fields.Char(default="50001")  #! temp
+
+    ellipro_data = fields.Text()
+    ellipro_order_data = fields.Text()
 
     def _compute_ellipro_visibility(self):
         company = self.env.user.company_id
@@ -36,10 +30,21 @@ class ElliproDataMixin(models.AbstractModel):
 
     def ellipro_get_infos(self):
         for rec in self:
-            self.env.user.company_id.pappers_api_token,
+            if self.country_id["id"]:
+                country = (
+                    self.env["res.country"]
+                    .browse(int(self.country_id["id"]))
+                    .code_alpha3
+                )
+            else:
+                country = "FRA"
+
             search_type = EP.SearchType.ID
             request_type = EP.RequestType.SEARCH.value
-            type_attribute = EP.IdType.ESTB
+            if country == "FRA":
+                type_attribute = EP.IdType.ESTB
+            else:
+                type_attribute = EP.IdType.REGISTER
 
             admin = EP.Admin(
                 self.env.user.company_id.ellipro_contract,
@@ -53,26 +58,31 @@ class ElliproDataMixin(models.AbstractModel):
                 self.env.user.company_id.ellipro_max_hits,
                 type_attribute,
                 main_only,
+                country,
             )
             response = EP.search(admin, search_request, request_type)
-            response = EP.search_response_handle(response)[0]
+            response = EP.search_response_handle(response, country)
+            if len(response) > 0:
+                response = response[0]
+            else:
+                raise Exception("API Response couldn't be treated")
 
             self.ellipro_identifiant_interne = response.get(
                 "ellipro_identifiant_interne", False
             )
-            self.ellipro_siret = response.get("ellipro_siret", False)
-            self.ellipro_siren = response.get("ellipro_siren", False)
-            self.ellipro_business_name = response.get("ellipro_business_name", False)
-            self.ellipro_trade_name = response.get("ellipro_trade_name", False)
             self.city = response.get("city", False)
             self.zip = response.get("zip", False)
             self.street = response.get("street", False)
             self.phone = response.get("phone", False)
+            self.ellipro_data = response.get("ellipro_data", False)
 
-    def ellipro_order(self):
+    def ellipro_order(self, file_format):
         request_type = EP.RequestType.ONLINEORDER.value
         order_request = EP.Order(
-            self.ellipro_identifiant_interne, self.ellipro_order_product
+            self.ellipro_identifiant_interne,
+            self.env.user.company_id.ellipro_order_product,
+            file_format,
+            EP.OutputMethod[file_format],
         )
 
         admin = EP.Admin(
@@ -81,8 +91,28 @@ class ElliproDataMixin(models.AbstractModel):
             self.env.user.company_id.ellipro_password,
         )
 
-        result = EP.search(admin, order_request, request_type)
+        return EP.search(admin, order_request, request_type)
+
+    def ellipro_xml_order(self):
+        result = self.ellipro_order("XML")
         parsed_result = EP.parse_order(result)
         self.ellipro_order_result = parsed_result["ellipro_order_result"]
         self.ellipro_rating_score = parsed_result["ellipro_rating_score"]
         self.ellipro_rating_riskclass = parsed_result["ellipro_rating_riskclass"]
+        self.ellipro_order_data = parsed_result["ellipro_order_data"]
+
+    def ellipro_pdf_order(self):
+        result = self.ellipro_order("PDF")
+        for rec in self:
+            name = rec.name + " Ellipro Report.pdf"
+            return self.env["ir.attachment"].create(
+                {
+                    "name": name,
+                    "type": "binary",
+                    "datas": result,
+                    "store_fname": name,
+                    "res_model": self._name,
+                    "res_id": self.id,
+                    "mimetype": "application/x-pdf",
+                }
+            )

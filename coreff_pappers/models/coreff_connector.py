@@ -26,11 +26,16 @@ class CoreffConnector(models.Model):
         Get companies' informations for coreff
         """
 
+        if arguments["country_id"]:
+            country = self.env["res.country"].browse(int(arguments["country_id"])).code
+        else:
+            country = "FR"
+
         search_value = arguments["value"]
         api_token = self.env.user.company_id.pappers_api_token
         if arguments["valueIsCompanyCode"]:
             response = PA.search_code(
-                api_token, search_value, arguments["is_head_office"]
+                api_token, search_value, arguments["is_head_office"], country
             )
             return response
         else:

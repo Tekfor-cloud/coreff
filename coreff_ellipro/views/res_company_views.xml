@@ -13,6 +13,7 @@
                     <field name="ellipro_password" password="1" required="1" />
                     <field name="ellipro_contract" required="1" />
                     <field name="ellipro_max_hits" />
+                    <field name="ellipro_order_product" />
                 </group>
             </group>
         </field>

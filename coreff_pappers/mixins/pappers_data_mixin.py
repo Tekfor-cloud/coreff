@@ -70,7 +70,7 @@ class PappersDataMixin(models.AbstractModel):
                 rec.coreff_company_code,
                 code_type,
             )
-            name = rec.name + " Report.pdf"
+            name = rec.name + " Pappers Report.pdf"
             return self.env["ir.attachment"].create(
                 {
                     "name": name,

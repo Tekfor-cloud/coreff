@@ -2,6 +2,7 @@ from requests import Session
 from odoo.tools.config import config
 from odoo import api, models
 from .. import ellipro as EP
+import logging
 
 
 class CustomSessionProxy(Session):
@@ -25,6 +26,12 @@ class CoreffConnector(models.Model):
         """
         Get companies' informations for coreff
         """
+        if arguments["country_id"]:
+            country = (
+                self.env["res.country"].browse(int(arguments["country_id"])).code_alpha3
+            )
+        else:
+            country = "FRA"
 
         search_type = (
             EP.SearchType.ID if arguments["valueIsCompanyCode"] else EP.SearchType.NAME
@@ -44,11 +51,13 @@ class CoreffConnector(models.Model):
             self.env.user.company_id.ellipro_max_hits,
             type_attribute,
             main_only,
+            country,
         )
         response = EP.search(admin, search_request, request_type)
         response = EP.search_response_handle(
-            response
+            response, country
         )  # * returns all research suggestions
+        logging.info(response)
         return response
 
     @api.model

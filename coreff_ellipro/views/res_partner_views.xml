@@ -16,27 +16,27 @@
                     invisible="1" />
                 <page string="Ellipro"
                     attrs="{'invisible': [('is_company', '=', False)]}">
-                    <group>
+                    <group col="8">
+                        <button string="Order as PDF"
+                            name="ellipro_pdf_order"
+                            type="object"
+                            class="oe_highlight" />
+                        <button string="Order as XML"
+                            name="ellipro_xml_order"
+                            type="object"
+                            class="oe_highlight" />
                         <button string="Get company's infos" name="ellipro_get_infos" type="object"
                             attrs="{'invisible': [('ellipro_visibility', '=', True)]}" />
+                    </group>
+                    <group>
                         <field name="ellipro_identifiant_interne" force_save="1" readonly="1" />
-                        <field name="ellipro_siren" force_save="1" readonly="1" />
-                        <field name="ellipro_siret" force_save="1" readonly="1" />
-                        <field name="ellipro_business_name" force_save="1" readonly="1" />
-                        <field name="ellipro_trade_name" force_save="1" readonly="1" />
-                        <field name="ellipro_city" force_save="1" readonly="1" />
-                        <field name="ellipro_zipcode" force_save="1" readonly="1" />
-                        <field name="ellipro_street_address" force_save="1" readonly="1" />
-                        <field name="ellipro_phone_number" force_save="1" readonly="1" />
                         <field name="ellipro_order_result" />
                         <field name="ellipro_rating_score" widget="percentpie" />
                         <field name="ellipro_rating_riskclass" widget="percentpie" />
-                        <field name="ellipro_order_product" />
-                        <button string="Make an order"
-                            name="ellipro_order"
-                            type="object"
-                            class="oe_highlight"
-                            confirm="Be careful, this action can override Ellipro fields" />
+                    </group>
+                    <group string="Data">
+                        <field name="ellipro_data" force_save="1" readonly="1" nolabel="1" />
+                        <field name="ellipro_order_data" readonly="1" nolabel="1" />
                     </group>
                 </page>
             </xpath>

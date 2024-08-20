@@ -10,6 +10,7 @@ class ResCompany(models.Model):
     ellipro_password = fields.Char()
     ellipro_contract = fields.Char()
     ellipro_max_hits = fields.Char()
+    ellipro_order_product = fields.Char(default="50001")
 
     @api.depends("coreff_connector_id")
     @api.onchange("coreff_connector_id")

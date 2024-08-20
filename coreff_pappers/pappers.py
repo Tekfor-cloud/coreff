@@ -79,7 +79,7 @@ def search_infos(api_token, search_value):
     return json_to_tree(response)
 
 
-def search_code(api_token, search_value, head_office_only):
+def search_code(api_token, search_value, head_office_only, country_code):
     """Send a siret/siren search request and returns companies' infos as a list of dictionaries"""
     check_code(search_value)
     headers = {"Content": "application/json"}
@@ -92,7 +92,7 @@ def search_code(api_token, search_value, head_office_only):
             + search_value
         )
         response = requests.get(request, headers=headers)
-        suggestions = parse_search_siren(response, head_office_only)
+        suggestions = parse_search_siren(response, head_office_only, country_code)
     elif len(search_value) == 14:
         request = (
             "https://api.pappers.fr/v2/entreprise?api_token="
@@ -101,7 +101,7 @@ def search_code(api_token, search_value, head_office_only):
             + search_value
         )
         response = requests.get(request, headers=headers)
-        suggestions = parse_search_siret(response)
+        suggestions = parse_search_siret(response, country_code)
     return suggestions
 
 
@@ -138,8 +138,7 @@ def parse_search_name(response_object):
             suggestion["street2"] = result["siege"]["adresse_ligne_2"]
             suggestion["city"] = result["siege"]["ville"]
             suggestion["zip"] = result["siege"]["code_postal"]
-            pappers_data = json.loads(response_object.text)
-            suggestion["pappers_data"] = json_to_tree(pappers_data)
+            suggestion["pappers_data"] = json_to_tree(response)
             suggestions.append(suggestion)
         return suggestions
     except:
@@ -149,7 +148,7 @@ def parse_search_name(response_object):
         raise Exception(error_text)
 
 
-def parse_search_siren(response_object, head_office_only):
+def parse_search_siren(response_object, head_office_only, country_code):
     """Takes the response json and returns companies' infos as a list of dictionaries"""
     suggestions = []
     response = json.loads(response_object.text)
@@ -164,11 +163,12 @@ def parse_search_siren(response_object, head_office_only):
             suggestion["country_id"] = establishment["code_pays"]
             suggestion["name"] = response["nom_entreprise"]
             suggestion["vat"] = response["numero_tva_intracommunautaire"]
-            pappers_data = json.loads(response_object.text)
-            suggestion["pappers_data"] = json_to_tree(pappers_data)
+            suggestion["pappers_data"] = json_to_tree(response)
             if (
-                head_office_only == False or establishment["siege"] == True
-            ) and establishment["etablissement_cesse"] == False:
+                (head_office_only == False or establishment["siege"] == True)
+                and establishment["etablissement_cesse"] == False
+                and establishment["code_pays"] == country_code
+            ):
                 suggestions.append(suggestion)
         return suggestions
     except:
@@ -178,7 +178,7 @@ def parse_search_siren(response_object, head_office_only):
         raise Exception(error_text)
 
 
-def parse_search_siret(response_object):
+def parse_search_siret(response_object, country_code):
     """Takes the response json and returns companies' infos as a list of dictionaries"""
     suggestions = []
     response = json.loads(response_object.text)
@@ -192,9 +192,9 @@ def parse_search_siret(response_object):
         suggestion["zip"] = response["etablissement"]["code_postal"]
         suggestion["country_id"] = response["etablissement"]["code_pays"]
         suggestion["vat"] = response["numero_tva_intracommunautaire"]
-        pappers_data = json.loads(response_object.text)
-        suggestion["pappers_data"] = json_to_tree(pappers_data)
-        suggestions.append(suggestion)
+        suggestion["pappers_data"] = json_to_tree(response)
+        if response["etablissement"]["code_pays"] == country_code:
+            suggestions.append(suggestion)
         return suggestions
     except:
         error_text = (
