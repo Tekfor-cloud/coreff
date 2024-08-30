@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-
-    <menuitem id="res_partner_menu_portfolios"
-        name="Creditsafe Portfolios"
-        parent="contacts.menu_contacts"
-        sequence="1"
-        action="portfolio_view" />
-</odoo>

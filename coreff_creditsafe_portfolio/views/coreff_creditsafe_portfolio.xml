@@ -38,6 +38,11 @@
                         <field name="subscriber_ids" />
                         <field name="partner_ids" />
                         <field name="portfolio_id" />
+                        <group>
+                            <button string="Synchroniser vers l'API" name="sync_api" type="object" />
+                            <button string="Synchroniser depuis l'API" name="sync_data"
+                                type="object" />
+                        </group>
                     </group>
                 </sheet>
             </form>

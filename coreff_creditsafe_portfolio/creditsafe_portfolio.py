@@ -27,6 +27,21 @@ class Portfolio:
             raise Exception(response.content)
         return response.json()
 
+    def portfolio_update_details(self, portfolio_name, emails, frequency="1"):
+        payload = {
+            "name": portfolio_name,
+            "emails": emails,
+            "emailSubject": "Creditsafe Monitoring Notification on portfolio {{portfolioName}}",
+            "emailLanguage": "fr",
+            "frequency": frequency,
+        }
+        response = requests.patch(
+            f"{self.url}/{self.portfolio_id}", json=payload, headers=self.headers
+        )
+        if response.status_code != 204:
+            raise Exception(response.content)
+        return response.json()
+
     def portfolio_delete(self):
         response = requests.delete(
             f"{self.url}/{self.portfolio_id}", headers=self.headers
@@ -37,6 +52,14 @@ class Portfolio:
 
     def get_portfolio_by_id(self):
         response = requests.get(f"{self.url}/{self.portfolio_id}", headers=self.headers)
+        if response.status_code != 200:
+            raise Exception(response.content)
+        return response.json()
+
+    def portfolio_company_list(self):
+        response = requests.get(
+            f"{self.url}/{self.portfolio_id}/companies", headers=self.headers
+        )
         if response.status_code != 200:
             raise Exception(response.content)
         return response.json()
@@ -62,12 +85,6 @@ class Company:
             "personalLimit": limit,
         }
         response = requests.post(self.url, json=payload, headers=self.headers)
-        if response.status_code != 200:
-            raise Exception(response.content)
-        return response.json()
-
-    def portfolio_company_list(self):
-        response = requests.get(self.url, headers=self.headers)
         if response.status_code != 200:
             raise Exception(response.content)
         return response.json()
@@ -100,3 +117,17 @@ class Company:
         if response.status_code != 200 and response.status_code != 204:
             raise Exception(response.content)
         return response.json()
+
+
+def parse_company_list(company_list):
+    company_ids = []
+    for element in company_list["data"]:
+        company_ids.append(element["id"])
+    return company_ids
+
+
+def parse_emails_list(emails_list):
+    email_adresses = []
+    for element in emails_list["emails"]:
+        email_adresses.append(element["emailAddress"])
+    return email_adresses
