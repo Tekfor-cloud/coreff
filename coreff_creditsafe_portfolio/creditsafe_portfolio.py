@@ -1,7 +1,6 @@
 import requests
 import json
 from dataclasses import dataclass, field, asdict
-import logging
 
 
 @dataclass
@@ -23,7 +22,6 @@ class Portfolio:
             "emailLanguage": "fr",
             "frequency": frequency,
         }
-        logging.info(payload)
         response = requests.post(self.url, json=payload, headers=self.headers)
         if response.status_code != 200:
             raise Exception(response.content)

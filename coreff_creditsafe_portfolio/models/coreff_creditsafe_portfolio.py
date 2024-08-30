@@ -22,8 +22,7 @@ class CoreffCreditsafePortfolio(models.Model):
         comodel_name="res.partner", relation="coreff_creditsafe_portfolio_partner_rel"
     )
 
-    @api.model
-    def create(self, vals):
+    def portfolio_auth(self):
         settings = self.env["coreff.connector"].get_company_creditsafe_settings(
             self.env.user.id
         )
@@ -32,7 +31,14 @@ class CoreffCreditsafePortfolio(models.Model):
             settings["username"],
             settings["password"],
         )
+        return auth_key
+
+    @api.model
+    def create(self, vals):
+        """Extends create() to create a complete portfolio on Creditsafe API"""
+        auth_key = self.portfolio_auth()
         portfolio = CR.Portfolio(auth_key, portfolio_name=vals["name"])
+
         sub_ids = vals["subscriber_ids"][0][2]
         emails = []
         for sub_id in sub_ids:
@@ -45,6 +51,7 @@ class CoreffCreditsafePortfolio(models.Model):
         if emails:
             portfolio_infos = portfolio.portfolio_create(emails)
             vals["portfolio_id"] = portfolio_infos["portfolioId"]
+
         part_ids = vals["partner_ids"][0][2]
         company_ids = []
         for part_id in part_ids:
@@ -56,6 +63,7 @@ class CoreffCreditsafePortfolio(models.Model):
                     auth_key, portfolio_infos["portfolioId"], company_id
                 )
                 company.portfolio_add_company()
+
         result = super(CoreffCreditsafePortfolio, self).create(vals)
         return result
 
@@ -64,5 +72,10 @@ class CoreffCreditsafePortfolio(models.Model):
         return result
 
     def unlink(self):
+        """Extends unlink() to delete a complete portfolio on Creditsafe API"""
+        auth_key = self.portfolio_auth()
+        for rec in self:
+            portfolio = CR.Portfolio(auth_key, rec.portfolio_id)
+            portfolio.portfolio_delete()
         result = super(CoreffCreditsafePortfolio, self).unlink()
         return result
