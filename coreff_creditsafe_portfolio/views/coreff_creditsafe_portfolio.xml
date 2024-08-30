@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="portfolio_view" model="ir.actions.act_window">
+        <field name="name">Creditsafe Portfolios</field>
+        <field name="res_model">coreff.creditsafe.portfolio</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Creditsafe Portfolios"
+        id="menu_portfolios"
+        parent="contacts.menu_contacts"
+        sequence="3"
+        action="portfolio_view">
+    </menuitem>
+
+    <record id="portfolio_tree_view" model="ir.ui.view">
+        <field name="name">coreff_creditsafe_portfolio.tree</field>
+        <field name="model">coreff.creditsafe.portfolio</field>
+        <field name="arch" type="xml">
+            <tree string="Analytic Tags">
+                <field name="name" />
+                <field name="subscriber_ids" />
+                <field name="partner_ids" />
+                <field name="portfolio_id" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="portfolio_form_view" model="ir.ui.view">
+        <field name="name">coreff_creditsafe_portfolio.form</field>
+        <field name="model">coreff.creditsafe.portfolio</field>
+        <field name="arch" type="xml">
+            <form string="Analytic Tags">
+                <sheet>
+                    <group>
+                        <field name="name" />
+                        <field name="subscriber_ids" />
+                        <field name="partner_ids" />
+                        <field name="portfolio_id" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
