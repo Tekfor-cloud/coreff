@@ -6,7 +6,7 @@
 
 {
     "name": "CoreFF: Basic Module",
-    "version": "14.0.1.1.0",
+    "version": "15.0.1.1.0",
     "category": "CoreFF",
     "author": "Article714",
     "license": "LGPL-3",
@@ -15,12 +15,21 @@
     "depends": ["base", "web"],
     "data": [
         "security/coreff_security.xml",
-        "views/coreff_autocomplete_assets.xml",
         "views/coreff_config_views.xml",
         "views/res_company_views.xml",
         "views/res_partner_views.xml",
     ],
-    "qweb": ["static/src/xml/coreff_autocomplete.xml"],
+    "assets": {
+        "web.assets_backend": [
+            "coreff_base/static/src/scss/coreff_autocomplete.scss",
+            "coreff_base/static/src/js/create_from_button.js",
+            "coreff_base/static/src/js/coreff_autocomplete_core.js",
+            "coreff_base/static/src/js/coreff_autocomplete_fieldchar.js",
+        ],
+        "web.assets_qweb": [
+            "coreff_base/static/src/xml/coreff_autocomplete.xml",
+        ],
+    },
     "installable": True,
     "images": [],
     "application": False,

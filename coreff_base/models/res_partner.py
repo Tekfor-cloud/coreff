@@ -101,7 +101,7 @@ class ResPartner(models.Model):
             res.append((rec.id, name))
         return res
 
-    # Based on https://github.com/OCA/l10n-spain/blob/14.0/l10n_es_partner/models/res_partner.py
+    # Based on https://github.com/OCA/l10n-spain/blob/15.0/l10n_es_partner/models/res_partner.py
     @api.model
     def _get_coreff_company_code_pattern(self):
         return (
@@ -110,7 +110,7 @@ class ResPartner(models.Model):
             .get_param("coreff_base.name_pattern", default="")
         )
 
-    # Based on https://github.com/OCA/l10n-spain/blob/14.0/l10n_es_partner/models/res_partner.py
+    # Based on https://github.com/OCA/l10n-spain/blob/15.0/l10n_es_partner/models/res_partner.py
     @api.model
     def name_search(self, name, args=None, operator="ilike", limit=100):
         """Give preference to coreff_company_code on name search, appending

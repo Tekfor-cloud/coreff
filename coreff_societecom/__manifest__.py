@@ -6,14 +6,18 @@
 
 {
     "name": "CoreFF: Societe.com",
-    "version": "14.0.1.1.0",
+    "version": "15.0.1.1.0",
     "category": "CoreFF",
     "author": "Article714",
     "license": "LGPL-3",
     "website": "https://www.article714.org",
     "depends": ["coreff_base"],
     "data": ["views/coreff_config_view.xml"],
-    "qweb": ["static/src/xml/create_from_button.xml"],
+    "assets": {
+        "web.assets_qweb": [
+            "coreff_societecom/static/src/xml/create_from_button.xml",
+        ],
+    },
     "installable": True,
     "images": [],
     "application": False,
