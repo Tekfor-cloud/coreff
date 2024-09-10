@@ -6,7 +6,7 @@
 
 {
     "name": "CoreFF: Societe.com",
-    "version": "15.0.1.1.0",
+    "version": "16.0.1.1.0",
     "category": "CoreFF",
     "author": "Article714",
     "license": "LGPL-3",
