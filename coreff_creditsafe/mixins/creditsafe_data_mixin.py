@@ -152,7 +152,7 @@ class CreditSafeDataMixin(models.AbstractModel):
 
             # CM: Retrieve company address details to override existing
             rec.phone = company_address.get("telephone", "")
-            rec.street = company_address.get("street", "")
+            rec.street = company_address.get("street", "").title()
             rec.city = company_address.get("city", "")
             rec.zip = company_address.get("postalCode", "")
             if "zip_id" in rec._fields:
@@ -363,10 +363,10 @@ class CreditSafeDataMixin(models.AbstractModel):
                 street = (
                     address.get("houseNumber", "")
                     + " "
-                    + address.get("street", "")
+                    + address.get("street", "").title()
                 )
             else:
-                street = address.get("street", "")
+                street = address.get("street", "").title()
             # CM: If phone exists use it, otherwise use phone from parent
             #  company
             if len(address.get("telephone", "")) > 0:
