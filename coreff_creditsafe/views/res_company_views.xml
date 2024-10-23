@@ -9,9 +9,12 @@
             <group name="coreff_core_fields" position="after">
                 <field name="creditsafe_visibility" invisible="1" />
                 <field name="parent_id" invisible="1" />
-                <group string="Creditsafe" attrs="{'invisible': [('creditsafe_visibility', '=', False)]}">
+                <group string="Creditsafe"
+                    attrs="{'invisible': [('creditsafe_visibility', '=', False)]}">
                     <group colspan="2">
-                        <field name="creditsafe_use_parent_company" attrs="{'invisible': [('parent_id', '=', False)]}" />
+                        <field name="creditsafe_use_parent_company"
+                            attrs="{'invisible': [('parent_id', '=', False)]}"
+                            groups="base.group_multi_company" />
                     </group>
                     <group attrs="{'invisible': [('creditsafe_use_parent_company', '=', True)]}">
                         <field name="creditsafe_url" />
