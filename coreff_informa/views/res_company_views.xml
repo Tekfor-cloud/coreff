@@ -10,9 +10,9 @@
                 <field name="informa_visibility" invisible="1" />
                 <group string="Informa" attrs="{'invisible': [('informa_visibility', '=', False)]}">
                     <group colspan="2">
+                        <field name="parent_id" invisible="1" groups="base.group_multi_company" />
                         <field name="informa_use_parent_company"
-                            attrs="{'invisible': [('parent_id', '=', False)]}"
-                            groups="base.group_multi_company" />
+                            attrs="{'invisible': [('parent_id', '=', False)]}" />
                     </group>
                     <group attrs="{'invisible': [('informa_use_parent_company', '=', True)]}">
                         <field name="informa_url" />
