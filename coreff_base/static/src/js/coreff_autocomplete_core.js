@@ -255,22 +255,7 @@ export function useCoreffAutocomplete() {
         user_id: session.uid,
       },
     ]);
-    const suggestions = await keepLastCoreff.add(prom);
-    suggestions.map((suggestion) => {
-      // suggestion.logo = suggestion.logo || "";
-      suggestion.label = suggestion.legal_name || suggestion.name;
-      // if (suggestion.vat) suggestion.description = suggestion.vat;
-      // else if (suggestion.website) suggestion.description = suggestion.website;
-
-      // if (suggestion.country_id && suggestion.country_id.display_name) {
-      //   if (suggestion.description)
-      //     suggestion.description += ` (${suggestion.country_id.display_name})`;
-      //   else suggestion.description += suggestion.country_id.display_name;
-      // }
-
-      return suggestion;
-    });
-    return suggestions;
+    return await keepLastCoreff.add(prom);
   }
 
   /**
