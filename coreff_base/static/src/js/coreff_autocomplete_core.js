@@ -77,7 +77,10 @@ export function useCoreffAutocomplete() {
       ).then((suggestions) => {
         coreffSuggestions = suggestions;
       });
-      return whenAll([prom]);
+      const resolveResults = () => {
+        return resolve(odooSuggestions);
+      };
+      whenAll([prom]).then(resolveResults, resolveResults);
     });
   }
 
