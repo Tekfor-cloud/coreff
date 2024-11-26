@@ -9,10 +9,9 @@
     </t>
 
     <t t-name="coreff_base.CharFieldDropdownOption" owl="1">
-        <img t-att-src="option.logo" onerror="this.src='/base/static/img/company_image.png'" alt="Placeholder"/>
         <div class="o_coreff_base_info">
             <strong t-esc="option.name or '&#160;'"/>
-            <div t-esc="option.creditsafe_company_id"/>
+            <div t-esc="option.coreff_company_code"/>
             <div t-esc="option.city"/>
         </div>
     </t>
