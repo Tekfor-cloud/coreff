@@ -21,13 +21,9 @@
     ],
     "assets": {
         "web.assets_backend": [
-            "coreff_base/static/src/scss/coreff_autocomplete.scss",
-            "coreff_base/static/src/js/create_from_button.js",
-            "coreff_base/static/src/js/coreff_autocomplete_core.js",
-            "coreff_base/static/src/js/coreff_autocomplete_fieldchar.js",
-        ],
-        "web.assets_qweb": [
-            "coreff_base/static/src/xml/coreff_autocomplete.xml",
+            "coreff_base/static/src/scss/*",
+            "coreff_base/static/src/js/*",
+            "coreff_base/static/src/xml/*",
         ],
     },
     "installable": True,

@@ -1,118 +1,328 @@
-odoo.define('coreff.autocomplete.core', function (require) {
-    'use strict';
+/** @odoo-module **/
+/* global checkVATNumber */
 
-    var rpc = require('web.rpc');
-    var session = require('web.session');
+import { loadJS } from "@web/core/assets";
+import { _t } from "@web/core/l10n/translation";
+import { KeepLast } from "@web/core/utils/concurrency";
+import { useService } from "@web/core/utils/hooks";
+import { renderToMarkup } from "@web/core/utils/render";
+import { getDataURLFromFile } from "@web/core/utils/urls";
+import { session } from "@web/session";
 
-    return {
-        autocomplete: function (value, valueIsCompanyCode, countryId, isHeadOffice) {
-            value = value.trim();
-            var self = this;
-            var def = $.Deferred();
+/**
+ * Get list of companies via Autocomplete API
+ *
+ * @param {string} value
+ * @returns {Promise}
+ * @private
+ */
+export function useCoreffAutocomplete() {
+  const keepLastCoreff = new KeepLast();
 
-            self._getCompanies(valueIsCompanyCode, countryId, isHeadOffice, value).then(res => {
-                if ("error" in res) {
-                    return def.reject(res.error);
-                }
-                else {
-                    return def.resolve(res);
-                }
-            });
+  const http = useService("http");
+  const notification = useService("notification");
+  const orm = useService("orm");
 
-            return def;
-        },
+  function sanitizeVAT(value) {
+    return value ? value.replace(/[^A-Za-z0-9]/g, "") : "";
+  }
 
-        getCreateData: function (company) {
-            var self = this;
-            var def = $.Deferred();
-            var company_data = company;
+  async function isVATNumber(value) {
+    // Lazyload jsvat only if the component is being used.
+    await loadJS("/partner_autocomplete/static/lib/jsvat.js");
 
-            const getCountryId = async (company) => {
-                var countryId;
-                countryId = await self._getCountryId(company.country_id);
-                return countryId;
-            };
+    // checkVATNumber is defined in library jsvat.
+    // It validates that the input has a valid VAT number format
+    return checkVATNumber(sanitizeVAT(value));
+  }
 
-            getCountryId(company).then(res => {
-                company_data.country_id = res;
-                def.resolve({
-                    company: company_data
-                });
-            });
+  function isGSTNumber(value) {
+    // Check if the input is a valid GST number.
+    let isGST = false;
+    if (value && value.length === 15) {
+      const allGSTinRe = [
+        /\d{2}[a-zA-Z]{5}\d{4}[a-zA-Z][1-9A-Za-z][Zz1-9A-Ja-j][0-9a-zA-Z]/, // Normal, Composite, Casual GSTIN
+        /\d{4}[A-Z]{3}\d{5}[UO]N[A-Z0-9]/, // UN/ON Body GSTIN
+        /\d{4}[a-zA-Z]{3}\d{5}NR[0-9a-zA-Z]/, // NRI GSTIN
+        /\d{2}[a-zA-Z]{4}[a-zA-Z0-9]\d{4}[a-zA-Z][1-9A-Za-z][DK][0-9a-zA-Z]/, // TDS GSTIN
+        /\d{2}[a-zA-Z]{5}\d{4}[a-zA-Z][1-9A-Za-z]C[0-9a-zA-Z]/, // TCS GSTIN
+      ];
 
-            return def;
-        },
+      isGST = allGSTinRe.some((re) => re.test(value));
+    }
 
-        isOnline: function () {
-            return navigator && navigator.onLine;
-        },
+    return isGST;
+  }
 
-        validateSearchTerm: function (search_val, onlyCompanyCode) {
-            if (onlyCompanyCode) {
-                return search_val && search_val.length > 8;
-            }
-            else {
-                return search_val && search_val.length > 3;
-            }
-        },
+  async function isTAXNumber(value) {
+    const isVAT = await isVATNumber(value);
+    const isGST = isGSTNumber(value);
+    return isVAT || isGST;
+  }
 
-        getUser: function () {
-            return rpc.query({
-                model: 'res.users',
-                method: 'read',
-                args: [session.uid, ['name', 'company_id']],
-            }).then(function (res) {
-                return res[0];
-            });
-        },
+  async function autocomplete(
+    value,
+    valueIsCompanyCode,
+    countryId,
+    isHeadOffice
+  ) {
+    value = value.trim();
+    let coreffSuggestions = [];
+    return new Promise((resolve, reject) => {
+      const prom = getCoreffSuggestions(
+        value,
+        valueIsCompanyCode,
+        countryId,
+        isHeadOffice
+      ).then((suggestions) => {
+        coreffSuggestions = suggestions;
+      });
+      return whenAll([prom]);
+    });
+  }
 
-        getConnector: function (company_id) {
-            return rpc.query({
-                model: 'res.company',
-                method: 'read',
-                args: [company_id, ['name', 'coreff_connector_id']]
-            }).then(function (res) {
-                return res[0];
-            });
-        },
+  /**
+   * Get enrichment data
+   *
+   * @param {Object} company
+   * @param {string} company.website
+   * @param {string} company.partner_gid
+   * @param {string} company.vat
+   * @returns {Promise}
+   * @private
+   */
+  function enrichCompany(company) {
+    return orm.call("res.partner", "enrich_company", [
+      company.website,
+      company.partner_gid,
+      company.vat,
+    ]);
+  }
 
-        getFieldList: function (connector_id) {
-            return rpc.query({
-                model: 'coreff.connector',
-                method: 'read',
-                args: [connector_id, ['name', 'autocomplete_fields']]
-            }).then(function (res) {
-                return res[0];
-            })
-        },
+  /**
+   * Get the company logo as Base 64 image from url
+   *
+   * @param {string} url
+   * @returns {Promise}
+   * @private
+   */
+  async function getCompanyLogo(url) {
+    try {
+      const base64Image = await getBase64Image(url);
+      // base64Image equals "data:" if image not available on given url
+      return base64Image
+        ? base64Image.replace(/^data:image[^;]*;base64,?/, "")
+        : false;
+    } catch {
+      return false;
+    }
+  }
 
-        _getCompanies: function (valueIsCompanyCode, countryId, isHeadOffice, value) {
-            var data = {};
-            data.valueIsCompanyCode = valueIsCompanyCode;
-            data.country_id = countryId;
-            data.is_head_office = isHeadOffice;
-            data.value = value;
-            data.user_id = session.uid;
-            return rpc.query({
-                model: 'coreff.api',
-                method: 'get_companies',
-                args: [data],
-            }).then(function (res) {
-                return res;
-            });
-        },
+  /**
+   * Get enriched data + logo before populating partner form
+   *
+   * @param {Object} company
+   * @returns {Promise}
+   */
+  function getCreateData(company) {
+    const removeUselessFields = (company) => {
+      // Delete attribute to avoid "Field_changed" errors
+      const fields = [
+        "label",
+        "description",
+        "domain",
+        "logo",
+        "legal_name",
+        "ignored",
+        "email",
+        "bank_ids",
+        "classList",
+        "skip_enrich",
+      ];
+      fields.forEach((field) => {
+        delete company[field];
+      });
 
-        _getCountryId: function (code) {
-            var domain = [['code', '=', code]];
-
-            return rpc.query({
-                model: 'res.country',
-                method: 'search_read',
-                args: [domain]
-            }).then(function (res) {
-                return res[0];
-            });
+      // Remove if empty and format it otherwise
+      const many2oneFields = ["country_id", "state_id"];
+      many2oneFields.forEach((field) => {
+        if (!company[field]) {
+          delete company[field];
         }
-
+      });
     };
-});
+
+    return new Promise((resolve) => {
+      // Fetch additional company info via Autocomplete Enrichment API
+      const enrichPromise = !company.skip_enrich
+        ? enrichCompany(company)
+        : false;
+
+      // Get logo
+      const logoPromise = company.logo ? getCompanyLogo(company.logo) : false;
+      whenAll([enrichPromise, logoPromise]).then(
+        ([company_data, logo_data]) => {
+          // The vat should be returned for free. This is the reason why
+          // we add it into the data of 'company' even if an error such as
+          // an insufficient credit error is raised.
+          if (company_data.error && company_data.vat) {
+            company.vat = company_data.vat;
+          }
+
+          if (company_data.error) {
+            if (company_data.error_message === "Insufficient Credit") {
+              notifyNoCredits();
+            } else if (company_data.error_message === "No Account Token") {
+              notifyAccountToken();
+            } else {
+              notification.add(company_data.error_message);
+            }
+            if (company_data.city !== undefined) {
+              company.city = company_data.city;
+            }
+            if (company_data.street !== undefined) {
+              company.street = company_data.street;
+            }
+            if (company_data.zip !== undefined) {
+              company.zip = company_data.zip;
+            }
+            company_data = company;
+          }
+
+          if (!Object.keys(company_data).length) {
+            company_data = company;
+          }
+
+          removeUselessFields(company_data);
+
+          // Assign VAT coming from parent VIES VAT query
+          if (company.vat) {
+            company_data.vat = company.vat;
+          }
+          resolve({
+            company: company_data,
+            logo: logo_data,
+          });
+        }
+      );
+    });
+  }
+
+  /**
+   * Returns a promise which will be resolved with the base64 data of the
+   * image fetched from the given url.
+   *
+   * @private
+   * @param {string} url : the url where to find the image to fetch
+   * @returns {Promise}
+   */
+  function getBase64Image(url) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = () => {
+        getDataURLFromFile(xhr.response).then(resolve);
+      };
+      xhr.open("GET", url);
+      xhr.responseType = "blob";
+      xhr.onerror = reject;
+      xhr.send();
+    });
+  }
+
+  /**
+   * Use Odoo Autocomplete API to return suggestions
+   *
+   * @param {string} value
+   * @param {boolean} isVAT
+   * @returns {Promise}
+   * @private
+   */
+  async function getCoreffSuggestions(
+    value,
+    valueIsCompanyCode,
+    countryId,
+    isHeadOffice
+  ) {
+    const prom = orm.silent.call("coreff.api", "get_companies", [
+      {
+        valueIsCompanyCode: valueIsCompanyCode,
+        country_id: countryId,
+        is_head_office: isHeadOffice,
+        value: value,
+        user_id: session.uid,
+      },
+    ]);
+    const suggestions = await keepLastCoreff.add(prom);
+    suggestions.map((suggestion) => {
+      // suggestion.logo = suggestion.logo || "";
+      suggestion.label = suggestion.legal_name || suggestion.name;
+      // if (suggestion.vat) suggestion.description = suggestion.vat;
+      // else if (suggestion.website) suggestion.description = suggestion.website;
+
+      // if (suggestion.country_id && suggestion.country_id.display_name) {
+      //   if (suggestion.description)
+      //     suggestion.description += ` (${suggestion.country_id.display_name})`;
+      //   else suggestion.description += suggestion.country_id.display_name;
+      // }
+
+      return suggestion;
+    });
+    return suggestions;
+  }
+
+  /**
+   * Utility to wait for multiple promises
+   * Promise.all will reject all promises whenever a promise is rejected
+   * This utility will continue
+   *
+   * @param {Promise[]} promises
+   * @returns {Promise}
+   * @private
+   */
+  function whenAll(promises) {
+    return Promise.all(
+      promises.map((p) => {
+        return Promise.resolve(p);
+      })
+    );
+  }
+
+  /**
+   * @private
+   * @returns {Promise}
+   */
+  async function notifyNoCredits() {
+    const url = await orm.call("iap.account", "get_credits_url", [
+      "partner_autocomplete",
+    ]);
+    const title = _t("Not enough credits for Partner Autocomplete");
+    const content = renderToMarkup(
+      "partner_autocomplete.InsufficientCreditNotification",
+      {
+        credits_url: url,
+      }
+    );
+    notification.add(content, {
+      title,
+    });
+  }
+
+  async function notifyAccountToken() {
+    const url = await orm.call("iap.account", "get_config_account_url", []);
+    const title = _t("IAP Account Token missing");
+    if (url) {
+      const content = renderToMarkup(
+        "partner_autocomplete.AccountTokenMissingNotification",
+        {
+          account_url: url,
+        }
+      );
+      notification.add(content, {
+        title,
+      });
+    } else {
+      notification.add(title);
+    }
+  }
+  return { autocomplete, getCreateData, isTAXNumber };
+}

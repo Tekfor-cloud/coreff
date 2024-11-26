@@ -1,47 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates>
-    <div t-name="coreff_autocomplete.dropdown"
-        class="o_partner_autocomplete_dropdown dropdown-menu show"
-        role="menu">
-        <div class="o_is_head_office_checkbox"
-            t-if="headOfficeCheckboxVisibility">
-            <input type="checkbox"
-                t-if="isHeadOfficeOnly"
-                checked="" />
-            <input type="checkbox"
-                t-else="" />
-            <label>Head Office Only</label>
-        </div>
-        <hr />
-        <t t-foreach="suggestions"
-            t-as="info">
-            <a role="menuitem"
-                href="#"
-                t-attf-class="dropdown-item o_partner_autocomplete_suggestion clearfix#{info_index == 0 and ' active' or ''}"
-                t-att-data-index="info_index">
-                <div class="o_partner_autocomplete_info">
-                    <strong>
-                        <t t-esc="info['name'] or '&#160;'" />
-                    </strong>
-                    <t t-esc="info['city'] or '&#160;'" />
-                    <div>
-                        <t t-esc="info['coreff_company_code']" />
-                    </div>
-                </div>
-            </a>
-        </t>
-    </div>
+    <t t-name="coreff_base.PartnerAutoCompleteCharField" t-inherit="web.CharField" owl="1">
+        <xpath expr="//t[@t-else='']" position="before">
+            <t t-elif="props.record.resModel !== 'res.partner' || props.record.data.company_type === 'company'">
+                <AutoComplete value="props.value || ''" sources="sources" onSelect.bind="onSelect" input="inputRef" placeholder="props.placeholder || ''"/>
+            </t>
+        </xpath>
+    </t>
 
-    <div t-name="coreff_autocomplete.loading"
-        class="o_partner_autocomplete_dropdown dropdown-menu show"
-        role="menu">
-        <div class="o_partner_autocomplete_info dropdown-item o_partner_autocomplete_suggestion loading-ellipsis">
-            <div class="lds-ellipsis">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
+    <t t-name="coreff_base.CharFieldDropdownOption" owl="1">
+        <img t-att-src="option.logo" onerror="this.src='/base/static/img/company_image.png'" alt="Placeholder"/>
+        <div class="o_coreff_base_info">
+            <strong t-esc="option.label or '&#160;'"/>
+            <div t-esc="option.description"/>
         </div>
-    </div>
+    </t>
+
+    <t t-name="coreff_base.Many2oneDropdownOption" owl="1">
+        <i class="fa fa-magic text-muted pe-1"/>
+        <t t-esc="option.label or '&#160;'"/>, <span class="text-muted" t-esc="option.description"/>
+        <img class="ms-1" t-att-src="option.logo"
+            onerror="this.src='/base/static/img/company_image.png'" alt="Placeholder"/>
+    </t>
+
+    <t t-name="coreff_base.InsufficientCreditNotification" owl="1">
+        <div class="o-hidden-ios">
+            <a class="btn btn-link" t-att-href="credits_url"><i class="fa fa-arrow-right"/> Buy more credits</a>
+        </div>
+    </t>
+
+    <t t-name="coreff_base.AccountTokenMissingNotification" owl="1">
+        <div class="">
+            <a class="btn btn-link" t-att-href="account_url"><i class="fa fa-arrow-right"/> Set Your Account Token</a>
+        </div>
+    </t>
 </templates>
