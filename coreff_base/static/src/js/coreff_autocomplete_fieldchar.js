@@ -60,32 +60,7 @@ export class PartnerAutoCompleteCharField extends CharField {
     const data = await this.partner_autocomplete.getCreateData(
       Object.getPrototypeOf(option)
     );
-
-    if (data.logo) {
-      const logoField =
-        this.props.record.resModel === "res.partner" ? "image_1920" : "logo";
-      data.company[logoField] = data.logo;
-    }
-
-    // Some fields are unnecessary in res.company
-    if (this.props.record.resModel === "res.company") {
-      const fields = ["comment", "child_ids", "additional_info"];
-      fields.forEach((field) => {
-        delete data.company[field];
-      });
-    }
-
-    // Format the many2one fields
-    const many2oneFields = ["country_id", "state_id"];
-    many2oneFields.forEach((field) => {
-      if (data.company[field]) {
-        data.company[field] = [
-          data.company[field].id,
-          data.company[field].display_name,
-        ];
-      }
-    });
-    this.props.record.update(data.company);
+    this.props.record.update(data);
     if (this.props.setDirty) {
       this.props.setDirty(false);
     }
