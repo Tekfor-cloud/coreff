@@ -3,7 +3,9 @@
     <t t-name="coreff_base.PartnerAutoCompleteCharField" t-inherit="web.CharField" owl="1">
         <xpath expr="//t[@t-else='']" position="before">
             <t t-elif="props.record.resModel !== 'res.partner' || props.record.data.company_type === 'company'">
-                <AutoComplete value="props.value || ''" sources="sources" onSelect.bind="onSelect" input="inputRef" placeholder="props.placeholder || ''"/>
+                <CoreffAutoComplete value="props.value || ''" sources="sources" onSelect.bind="onSelect"
+                    input="inputRef" placeholder="props.placeholder || ''"
+                    onHeadOfficeCheck="(checked) => this.state.headOffice = checked"/>
             </t>
         </xpath>
     </t>
@@ -14,6 +16,16 @@
             <div t-esc="option.coreff_company_code"/>
             <div t-esc="option.city"/>
         </div>
+    </t>
+
+    <t t-name="coreff_base.AutoComplete" t-inherit="web.AutoComplete" owl="1">
+        <xpath expr="//ul/*[1]" position="before">
+            <li>
+                <input id="head_office_checkbox" type="checkbox" t-att-checked="state.headOffice ? 'checked' : ''"
+                    t-on-change="onUpdateHeadOffice"/>
+                <label for="head_office_checkbox">Head-Office</label>
+            </li>
+        </xpath>
     </t>
 
     <t t-name="coreff_base.InsufficientCreditNotification" owl="1">

@@ -6,6 +6,7 @@ import { registry } from "@web/core/registry";
 import { _t } from "@web/core/l10n/translation";
 import { CharField } from "@web/views/fields/char/char_field";
 import { useInputField } from "@web/views/fields/input_field_hook";
+const { useState } = owl;
 
 import { useCoreffAutocomplete } from "@coreff_base/js/coreff_autocomplete_core";
 
@@ -20,6 +21,9 @@ export class PartnerAutoCompleteCharField extends CharField {
       getValue: () => this.props.value || "",
       parse: (v) => this.parse(v),
       ref: this.inputRef,
+    });
+    this.state = useState({
+      headOffice: true,
     });
   }
 
@@ -40,7 +44,7 @@ export class PartnerAutoCompleteCharField extends CharField {
               request,
               this.props.name !== "name",
               this.props.record.data.country_id[0],
-              false
+              this.state.headOffice
             );
             suggestions.forEach((suggestion) => {
               suggestion.classList = "partner_autocomplete_dropdown_char";
@@ -67,11 +71,31 @@ export class PartnerAutoCompleteCharField extends CharField {
   }
 }
 
+class CoreffAutoComplete extends AutoComplete {
+  setup() {
+    super.setup();
+    this.state = useState({
+      headOffice: true,
+    });
+  }
+
+  onUpdateHeadOffice(ev) {
+    this.state.headOffice = ev.target.checked;
+    this.props.onHeadOfficeCheck(this.state.headOffice);
+    this.close();
+  }
+}
+CoreffAutoComplete.template = "coreff_base.AutoComplete";
+CoreffAutoComplete.props = {
+  ...AutoComplete.props,
+  onHeadOfficeCheck: { type: Function, optional: true },
+};
+
 PartnerAutoCompleteCharField.template =
   "coreff_base.PartnerAutoCompleteCharField";
 PartnerAutoCompleteCharField.components = {
   ...CharField.components,
-  AutoComplete,
+  CoreffAutoComplete,
 };
 
 registry
