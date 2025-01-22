@@ -6,9 +6,14 @@ import { registry } from "@web/core/registry";
 import { _t } from "@web/core/l10n/translation";
 import { CharField } from "@web/views/fields/char/char_field";
 import { useInputField } from "@web/views/fields/input_field_hook";
-const { useState } = owl;
 
 import { useCoreffAutocomplete } from "@coreff_base/js/coreff_autocomplete_core";
+
+import { useForwardRefToParent, useService } from "@web/core/utils/hooks";
+import { useDebounced } from "@web/core/utils/timing";
+import { usePosition } from "@web/core/position_hook";
+
+import { useExternalListener, useRef, useState } from "@odoo/owl";
 
 export class PartnerAutoCompleteCharField extends CharField {
   setup() {
@@ -73,16 +78,66 @@ export class PartnerAutoCompleteCharField extends CharField {
 
 class CoreffAutoComplete extends AutoComplete {
   setup() {
-    super.setup();
+    this.nextSourceId = 0;
+    this.nextOptionId = 0;
+    this.sources = [];
+
     this.state = useState({
+      navigationRev: 0,
+      optionsRev: 0,
+      open: false,
+      activeSourceOption: null,
+      value: this.props.value,
       headOffice: true,
+    });
+
+    this.inputRef = useForwardRefToParent("input");
+    this.root = useRef("root");
+
+    this.debouncedProcessInput = useDebounced(async () => {
+      const currentPromise = this.pendingPromise;
+      this.pendingPromise = null;
+      this.props.onInput({
+        inputValue: this.inputRef.el.value,
+      });
+      try {
+        await this.open(true);
+        currentPromise.resolve();
+      } catch {
+        currentPromise.reject();
+      } finally {
+        if (currentPromise === this.loadingPromise) {
+          this.loadingPromise = null;
+        }
+      }
+    }, this.constructor.timeout);
+
+    useExternalListener(window, "scroll", this.externalClose, true);
+    useExternalListener(window, "pointerdown", this.externalClose, true);
+
+    this.hotkey = useService("hotkey");
+    this.hotkeysToRemove = [];
+
+    super.setup();
+    owl.onWillUpdateProps((nextProps) => {
+      if (this.props.value !== nextProps.value || this.forceValFromProp) {
+        this.forceValFromProp = false;
+        this.state.value = nextProps.value;
+        this.inputRef.el.value = nextProps.value;
+      }
+    });
+
+    // position and size
+    usePosition(() => this.inputRef.el, {
+      popper: "sourcesList",
+      position: "bottom-start",
     });
   }
 
-  onUpdateHeadOffice(ev) {
+  async onUpdateHeadOffice(ev) {
     this.state.headOffice = ev.target.checked;
     this.props.onHeadOfficeCheck(this.state.headOffice);
-    this.close();
+    await this.onInput();
   }
 }
 CoreffAutoComplete.template = "coreff_base.AutoComplete";
