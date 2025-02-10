@@ -230,10 +230,25 @@ class CreditSafeDataMixin(models.AbstractModel):
 
             # CM: Handle errors with companies that have no credit score
             try:
-                rec.creditsafe_rating = (
+                creditsafe_rating_value = float(
                     credit_score.get("currentCreditRating", {})
                     .get("providerValue", {})
                     .get("value", 0)
+                )
+                creditsafe_rating_min = float(
+                    credit_score.get("currentCreditRating", {})
+                    .get("providerValue", {})
+                    .get("minValue", 0)
+                )
+                creditsafe_rating_max = float(
+                    credit_score.get("currentCreditRating", {})
+                    .get("providerValue", {})
+                    .get("maxValue", 0)
+                )
+                rec.creditsafe_rating = int(
+                    (creditsafe_rating_value - creditsafe_rating_min)
+                    / (creditsafe_rating_max - creditsafe_rating_min)
+                    * 100
                 )
                 rec.creditsafe_rating_short = credit_score.get(
                     "currentCreditRating", {}
