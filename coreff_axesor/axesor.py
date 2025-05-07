@@ -1,6 +1,6 @@
 import requests
 import pprint
-from odoo.exceptions import Exception
+import logging # à jarter
 
 URL_MAPPING = {
     "sandbox":"https://apis.axesor.es/sandbox/Qualitas/v1",
@@ -59,15 +59,28 @@ def get_directors(url_type, token, code):
         raise Exception(response.text)
     response = response.json()
     directors = []
-    for shareholder in response["ShareholdersCorporateBodiesInfoResponse"]["ShareholdersList"]:
+    shareholders = response["ShareholdersCorporateBodiesInfoResponse"]["ShareholdersList"]
+    if shareholders and type(shareholders) != list():
         director = {}
-        director["name"] = shareholder["Shareholder"]["Name"]
+        director["name"] = shareholders["Shareholder"]["Name"]
         director["job"] = "Shareholder"
-        directors.append()
-    for corporate in response["CorporateBodiesInManagementPositionsList"]["CorporateBody"]:
-        director["name"] = corporate["Name"]
+        directors.append(director)
+    elif shareholders:
+        for shareholder in shareholders:
+            director = {}
+            director["name"] = shareholder["Shareholder"]["Name"]
+            director["job"] = "Shareholder"
+            directors.append(director)
+    corporates = response["ShareholdersCorporateBodiesInfoResponse"]["CorporateBodiesInManagementPositionsList"]
+    if corporates and type(corporates) != list():
+        director["name"] = corporates["Name"]
         director["job"] = "Corporate Body"
-        directors.append()
+        directors.append(director)
+    elif corporates:
+        for corporate in corporates:
+            director["name"] = corporate["Name"]
+            director["job"] = "Corporate Body"
+            directors.append(director)
     return directors
 
 

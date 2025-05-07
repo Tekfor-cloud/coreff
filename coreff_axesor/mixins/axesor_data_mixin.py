@@ -30,12 +30,6 @@ class AxesorDataMixin(models.AbstractModel):
         endpoint = self.env.user.company_id.axesor_endpoint
         api_token = AX.get_token(endpoint, self.env.user.company_id.axesor_login, self.env.user.company_id.axesor_password)
         for rec in self:
-            if len(rec.coreff_company_code) != 14:
-                raise Exception(
-                    _(
-                        "Please replace the SIREN code for a SIRET one. To proceed, you can just add a 0 at the end of the SIREN number to get all different SIRET numbers."
-                    )
-                )
             directors = AX.get_directors(
                 endpoint,
                 api_token,
@@ -73,7 +67,7 @@ class AxesorDataMixin(models.AbstractModel):
             rec.website = infos["dict"]["Web"]
             rec.axesor_risk_score = infos["dict"]["RiskScoring"]
             rec.axesor_data = infos["pretty_json"]
-            
+
     def axesor_get_report(self):
         for rec in self:
             return
