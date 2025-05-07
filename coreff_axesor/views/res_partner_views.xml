@@ -18,6 +18,7 @@
                     attrs="{'invisible': [('is_company', '=', False)]}">
                     <group>
                         <field name="axesor_internal_id" force_save="1" readonly="1" />
+                        <field name="axesor_risk_score" />
                         <field name="axesor_data" />
                         <button string="Get company's infos" name="axesor_get_infos" type="object"
                             attrs="{'invisible': [('axesor_visibility', '=', True)]}" />

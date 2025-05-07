@@ -4,6 +4,7 @@ from odoo import api, models
 from .. import axesor as AX
 
 
+
 class CustomSessionProxy(Session):
     def __init__(self):
         super().__init__()
@@ -25,17 +26,17 @@ class CoreffConnector(models.Model):
         """
         Get companies' informations for coreff
         """
-
+        endpoint = self.env.user.company_id.axesor_endpoint
         search_value = arguments["value"]
-        api_token = AX.get_token(self.env.user.company_id.axesor_login, self.env.user.company_id.axesor_password)
+        api_token = AX.get_token(endpoint, self.env.user.company_id.axesor_login, self.env.user.company_id.axesor_password)
         if arguments["valueIsCompanyCode"]:
             response = AX.search_by_code(
-                api_token, search_value
+                endpoint, api_token, search_value
             )
             return response
         else:
             response = AX.search_by_name(
-                api_token, search_value, api_token
+                endpoint, api_token, search_value
             )
         return response
 
