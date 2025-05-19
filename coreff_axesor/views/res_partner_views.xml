@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.ui.view"
+        id="axesor_partner_form">
+        <field name="name">axesor.partner.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id"
+            ref="coreff_base.coreff_partner_form" />
+        <field name="arch"
+            type="xml">
+
+            <xpath expr="//page[@name='internal_notes']"
+                position="before">
+                <field name="axesor_visibility"
+                    invisible="1" />
+                <page string="Axesor"
+                    attrs="{'invisible': [('is_company', '=', False)]}">
+                    <group>
+                        <field name="axesor_internal_id" force_save="1" readonly="1" />
+                        <field name="axesor_risk_score" />
+                        <field name="axesor_data" />
+                        <button string="Get company's infos" name="axesor_get_infos" type="object"
+                            attrs="{'invisible': [('axesor_visibility', '=', False)]}" />
+                        <button string="Retrieve Directors"
+                            name="axesor_retrieve_directors"
+                            type="object" />
+                        <button string="Get Report" name="axesor_get_report" type="object" />
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
