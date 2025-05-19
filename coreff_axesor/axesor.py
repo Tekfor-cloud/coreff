@@ -1,6 +1,5 @@
 import requests
 import pprint
-import logging # à jarter
 
 URL_MAPPING = {
     "sandbox":"https://apis.axesor.es/sandbox/Qualitas/v1",
@@ -25,7 +24,8 @@ def search(url_type, token, query):
 
 def search_parse(response):
     companies = response["CompanySeachResponse"]["Companies"]
-    # companies = response["CompanySearchResponse"]["Companies"] # TO REPLACE UPON API FIX (api-side typo)
+    # companies = response["CompanySearchResponse"]["Companies"] 
+    # TO REPLACE UPON API FIX (api-side typo)
     companies_infos = []
     if type(companies) != list:
         companies = [companies]
