@@ -27,7 +27,7 @@ def search_parse(response):
     # companies = response["CompanySearchResponse"]["Companies"] 
     # TO REPLACE UPON API FIX (api-side typo)
     companies_infos = []
-    if type(companies) != list:
+    if not isinstance(companies, list):
         companies = [companies]
     for company in companies:
         company_infos = {}
