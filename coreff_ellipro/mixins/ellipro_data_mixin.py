@@ -30,8 +30,9 @@ class ElliproDataMixin(models.AbstractModel):
     def _compute_ellipro_visibility(self):
         company = self.env.user.company_id
         for rec in self:
-            rec.ellipro_visibility = company.coreff_connector_id == self.env.ref(
-                "coreff_ellipro.coreff_connector_ellipro_api"
+            rec.ellipro_visibility = (
+                company.coreff_connector_id
+                == self.env.ref("coreff_ellipro.coreff_connector_ellipro_api")
             )
 
     def ellipro_get_infos(self):
@@ -62,7 +63,9 @@ class ElliproDataMixin(models.AbstractModel):
             )
             self.ellipro_siret = response.get("ellipro_siret", False)
             self.ellipro_siren = response.get("ellipro_siren", False)
-            self.ellipro_business_name = response.get("ellipro_business_name", False)
+            self.ellipro_business_name = response.get(
+                "ellipro_business_name", False
+            )
             self.ellipro_trade_name = response.get("ellipro_trade_name", False)
             self.city = response.get("city", False)
             self.zip = response.get("zip", False)
@@ -85,4 +88,7 @@ class ElliproDataMixin(models.AbstractModel):
         parsed_result = EP.parse_order(result)
         self.ellipro_order_result = parsed_result["ellipro_order_result"]
         self.ellipro_rating_score = parsed_result["ellipro_rating_score"]
-        self.ellipro_rating_riskclass = parsed_result["ellipro_rating_riskclass"]
+        self.ellipro_rating_riskclass = parsed_result[
+            "ellipro_rating_riskclass"
+        ]
+        self.coreff_company_score = parsed_result["ellipro_rating_score"]
