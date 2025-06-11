@@ -22,7 +22,6 @@
           <field name="coreff_company_code" widget="field_coreff_autocomplete" options="{'headOffice': True}"
             placeholder="Company code"
             attrs="{'invisible': [('is_company', '=', False)], 'required': [('is_company', '=', True), ('coreff_company_code_mandatory','=',True)]}"/>
-          <field name="coreff_company_score" />
         </h2>
       </xpath>
     </field>
