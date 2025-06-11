@@ -269,6 +269,9 @@ class CreditSafeDataMixin(models.AbstractModel):
                     / (creditsafe_rating_max - creditsafe_rating_min)
                     * 100
                 )
+                rec.coreff_credit_limit = credit_score.get(
+                    "currentContractLimit", {}
+                ).get("value", 0)
             except:  # noqa: E722
                 rec.creditsafe_rating = 0
 

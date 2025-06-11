@@ -30,7 +30,8 @@ class ResPartner(models.Model):
     coreff_company_code_mandatory = fields.Boolean(
         related="company_id.coreff_company_code_mandatory"
     )
-    coreff_company_score = fields.Integer(string="Rating", readonly=True)
+    coreff_company_score = fields.Integer(string="Rating in %", readonly=True)
+    coreff_credit_limit = fields.Integer(readonly=True)
 
     # -------------------------
     # unimplemented method that will be defined in other module to
