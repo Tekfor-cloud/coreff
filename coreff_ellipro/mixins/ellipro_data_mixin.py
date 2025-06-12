@@ -87,7 +87,6 @@ class ElliproDataMixin(models.AbstractModel):
         result = EP.search(admin, order_request, request_type)
         parsed_result = EP.parse_order(result)
         self.ellipro_order_result = parsed_result["ellipro_order_result"]
-        self.ellipro_rating_score = parsed_result["ellipro_rating_score"]
         self.ellipro_rating_riskclass = parsed_result[
             "ellipro_rating_riskclass"
         ]
