@@ -23,7 +23,6 @@ class ElliproDataMixin(models.AbstractModel):
     ellipro_phone_number = fields.Char()
 
     ellipro_order_result = fields.Char()
-    ellipro_rating_score = fields.Integer()
     ellipro_rating_riskclass = fields.Integer()
     ellipro_order_product = fields.Char(default="50001")  #! temp
 
