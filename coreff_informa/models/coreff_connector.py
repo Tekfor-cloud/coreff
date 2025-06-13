@@ -63,6 +63,7 @@ class CoreffConnector(models.Model):
         for company in companies:
             suggestion = {}
             suggestion["informa_company_id"] = company["DUNS_NBR"]
+            suggestion["coreff_company_id_key"] = "informa_company_id"
             suggestion["name"] = company["NME"]
             suggestion["street"] = company["ADR_LINE"]
             suggestion["city"] = company["NON_POST_TOWN"]

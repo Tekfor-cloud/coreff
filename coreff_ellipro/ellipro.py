@@ -160,6 +160,7 @@ def search_response_handle(response):
         suggestion["ellipro_identifiant_interne"] = establishment.findall(
             "id[@idName='Identifiant interne']"
         )[0].text
+        suggestion["coreff_company_id_key"] = "ellipro_identifiant_interne"
         if establishment.findall("communication[@type='phone']") != []:
             suggestion["phone"] = establishment.findall(
                 "communication[@type='phone']"

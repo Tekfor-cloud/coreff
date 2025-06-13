@@ -220,6 +220,9 @@ class CoreffConnector(models.Model):
                         suggestion["creditsafe_company_id"] = company.get(
                             "id", ""
                         )
+                        suggestion["coreff_company_id_key"] = (
+                            "creditsafe_company_id"
+                        )
                         suggestion["name"] = company.get("name", "")
                         suggestion["coreff_company_code"] = company.get(
                             "regNo", ""
