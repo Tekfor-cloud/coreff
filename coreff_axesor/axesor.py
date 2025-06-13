@@ -2,9 +2,10 @@ import requests
 import pprint
 
 URL_MAPPING = {
-    "sandbox":"https://apis.axesor.es/sandbox/Qualitas/v1",
-    "production":"https://apis.axesor.es/Qualitas/v1"
+    "sandbox": "https://apis.axesor.es/sandbox/Qualitas/v1",
+    "production": "https://apis.axesor.es/Qualitas/v1",
 }
+
 
 def get_token(url_type, login, password):
     token_url = f"{URL_MAPPING[url_type]}/authorization?userName={login}&pwd={password}"
@@ -24,7 +25,7 @@ def search(url_type, token, query):
 
 def search_parse(response):
     companies = response["CompanySeachResponse"]["Companies"]
-    # companies = response["CompanySearchResponse"]["Companies"] 
+    # companies = response["CompanySearchResponse"]["Companies"]
     # TO REPLACE UPON API FIX (api-side typo)
     companies_infos = []
     if not isinstance(companies, list):
@@ -34,6 +35,7 @@ def search_parse(response):
         company_infos["coreff_company_code"] = company["Company"]["TIN"]
         company_infos["name"] = company["Company"]["CorporateName"]
         company_infos["axesor_internal_id"] = company["Company"]["InfotelCode"]
+        company_infos["coreff_company_id_key"] = "axesor_internal_id"
         companies_infos.append(company_infos)
     return companies_infos
 
@@ -59,7 +61,9 @@ def get_directors(url_type, token, code):
         raise Exception(response.text)
     response = response.json()
     directors = []
-    shareholders = response["ShareholdersCorporateBodiesInfoResponse"]["ShareholdersList"]
+    shareholders = response["ShareholdersCorporateBodiesInfoResponse"][
+        "ShareholdersList"
+    ]
     if shareholders and type(shareholders) != list():
         director = {}
         director["name"] = shareholders["Shareholder"]["Name"]
@@ -71,7 +75,9 @@ def get_directors(url_type, token, code):
             director["name"] = shareholder["Shareholder"]["Name"]
             director["job"] = "Shareholder"
             directors.append(director)
-    corporates = response["ShareholdersCorporateBodiesInfoResponse"]["CorporateBodiesInManagementPositionsList"]
+    corporates = response["ShareholdersCorporateBodiesInfoResponse"][
+        "CorporateBodiesInManagementPositionsList"
+    ]
     if corporates and type(corporates) != list():
         director["name"] = corporates["Name"]
         director["job"] = "Corporate Body"
