@@ -69,6 +69,7 @@ export class PartnerAutoCompleteCharField extends CharField {
     const data = await this.partner_autocomplete.getCreateData(
       Object.getPrototypeOf(option)
     );
+    data.pop("coreff_company_id_key");
     this.props.record.update(data);
     if (this.props.setDirty) {
       this.props.setDirty(false);
