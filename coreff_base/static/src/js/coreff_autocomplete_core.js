@@ -68,20 +68,22 @@ export function useCoreffAutocomplete() {
   ) {
     value = value.trim();
     let coreffSuggestions = [];
-    return new Promise((resolve, reject) => {
-      const prom = getCoreffSuggestions(
-        value,
-        valueIsCompanyCode,
-        countryId,
-        isHeadOffice
-      ).then((suggestions) => {
-        coreffSuggestions = suggestions;
+    if (value.length > 8)
+      return new Promise((resolve, reject) => {
+        const prom = getCoreffSuggestions(
+          value,
+          valueIsCompanyCode,
+          countryId,
+          isHeadOffice
+        ).then((suggestions) => {
+          coreffSuggestions = suggestions;
+        });
+        const resolveResults = () => {
+          return resolve(coreffSuggestions);
+        };
+        whenAll([prom]).then(resolveResults, resolveResults);
       });
-      const resolveResults = () => {
-        return resolve(coreffSuggestions);
-      };
-      whenAll([prom]).then(resolveResults, resolveResults);
-    });
+    else return coreffSuggestions;
   }
 
   /**
