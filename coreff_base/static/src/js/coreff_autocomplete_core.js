@@ -68,7 +68,7 @@ export function useCoreffAutocomplete() {
   ) {
     value = value.trim();
     let coreffSuggestions = [];
-    if (value.length > 8)
+    if ((valueIsCompanyCode && value.length > 8) || !valueIsCompanyCode)
       return new Promise((resolve, reject) => {
         const prom = getCoreffSuggestions(
           value,
