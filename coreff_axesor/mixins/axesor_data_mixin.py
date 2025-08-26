@@ -1,4 +1,5 @@
 from odoo import fields, models, _
+from odoo.tools.config import config
 from .. import axesor as AX
 import pycountry
 
@@ -31,10 +32,15 @@ class AxesorDataMixin(models.AbstractModel):
             return
 
     def axesor_get_infos(self):
+        """Fetch the company's infos from the API using company code"""
+        proxies = {
+            "http":config.get("proxy_http"),
+            "https":config.get("proxy_https"),
+        }
         for rec in self:
             login = self.env.user.company_id.axesor_login
             password = self.env.user.company_id.axesor_password
-            infos = AX.get_infos(login, password, rec.coreff_company_code)
+            infos = AX.get_infos(login, password, rec.coreff_company_code, proxies)
             rec.street = infos["street"]
             rec.city = infos["city"]
             rec.zip = infos["zip"]

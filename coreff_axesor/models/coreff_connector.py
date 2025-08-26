@@ -26,13 +26,17 @@ class CoreffConnector(models.Model):
         """
         Get companies' informations for coreff
         """
+        proxies = {
+            "http":config.get("proxy_http"),
+            "https":config.get("proxy_https"),
+        }
         user = self.env.user.company_id.axesor_login
         password = self.env.user.company_id.axesor_password
         search_value = arguments["value"]
         if arguments["valueIsCompanyCode"]:
-            response = AX.search_by_code(user, password, search_value)
+            response = AX.search_by_code(user, password, search_value, config)
         else:
-            response = AX.search_by_name(user, password, search_value)
+            response = AX.search_by_name(user, password, search_value, config)
         return response
 
     @api.model

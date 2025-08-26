@@ -16,11 +16,7 @@ def search_parse(response:str):
         companies_infos.append(company_infos)
     return companies_infos
 
-def search_by_name(user, password, company_name):
-    proxies = {
-        "http":"",
-        "https":"",
-    }
+def search_by_name(user, password, company_name, proxies):
     params = {"cod_usuario": user, "accion": "3"}
     params.update({"nombreSociedad": company_name})
 
@@ -31,11 +27,7 @@ def search_by_name(user, password, company_name):
     res = requests.get("https://www.axesor.es/buscador-unificado", params=params, proxies=proxies)
     return search_parse(res.text)
 
-def search_by_code(user, password, code):
-    proxies = {
-        "http":"",
-        "https":"",
-    }
+def search_by_code(user, password, code, proxies):
     params = {"cod_usuario": user, "cod_servicio": "388", "cod_idioma": "2"}
     params.update({"cif": code})
 
@@ -46,11 +38,7 @@ def search_by_code(user, password, code):
     res = requests.get("https://informes.axesor.es/informe", params=params, proxies=proxies)
     return search_parse(res.text)
 
-def get_infos(user, password, code):
-    proxies = {
-        "http":"",
-        "https":"",
-    }
+def get_infos(user, password, code, proxies):
     params = {"cod_usuario": user, "cod_servicio": "388", "cod_idioma": "2"}
     params.update({"cif": code})
 
