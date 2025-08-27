@@ -16,7 +16,7 @@ def search_parse(response:str):
         companies_infos.append(company_infos)
     return companies_infos
 
-def search_by_name(user, password, company_name, proxies):
+def search_by_name(user, password, company_name, session):
     params = {"cod_usuario": user, "accion": "3"}
     params.update({"nombreSociedad": company_name})
 
@@ -24,10 +24,11 @@ def search_by_name(user, password, company_name, proxies):
     digest = hashlib.sha3_256((cadena + password).encode("iso-8859-1")).hexdigest()
     params["crc"] = digest
 
-    res = requests.get("https://www.axesor.es/buscador-unificado", params=params, proxies=proxies)
+    with session as s:
+        res = s.get("https://www.axesor.es/buscador-unificado", params=params)
     return search_parse(res.text)
 
-def search_by_code(user, password, code, proxies):
+def search_by_code(user, password, code, session):
     params = {"cod_usuario": user, "cod_servicio": "388", "cod_idioma": "2"}
     params.update({"cif": code})
 
@@ -35,10 +36,11 @@ def search_by_code(user, password, code, proxies):
     digest = hashlib.sha3_256((cadena + password).encode("iso-8859-1")).hexdigest()
     params["crc"] = digest
 
-    res = requests.get("https://informes.axesor.es/informe", params=params, proxies=proxies)
-    return search_parse(res.text)
+    with session as s:
+        res = s.get("https://informes.axesor.es/informe", params=params)
+    return parse_infos(res.text)    #! à retester en fonction du retour API
 
-def get_infos(user, password, code, proxies):
+def get_infos(user, password, code, session):
     params = {"cod_usuario": user, "cod_servicio": "388", "cod_idioma": "2"}
     params.update({"cif": code})
 
@@ -46,7 +48,8 @@ def get_infos(user, password, code, proxies):
     digest = hashlib.sha3_256((cadena + password).encode("iso-8859-1")).hexdigest()
     params["crc"] = digest
 
-    res = requests.get("https://informes.axesor.es/informe", params=params, proxies=proxies)
+    with session as s:
+        res = s.get("https://informes.axesor.es/informe", params=params)
     return parse_infos(res.text)
 
 def parse_infos(response:str):
