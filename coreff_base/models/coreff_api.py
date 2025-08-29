@@ -21,11 +21,10 @@ class CoreffAPI(models.Model):
         company = self.env.user.company_id
         connector = company.coreff_connector_id
         if connector:
-            if "value" in arguments and len(arguments["value"]) > 8:
-                return safe_eval(
-                    connector.get_companies_def,
-                    {"self": connector, "arguments": arguments},
-                )
+            return safe_eval(
+                connector.get_companies_def,
+                {"self": connector, "arguments": arguments},
+            )
         return False
 
     @api.model
