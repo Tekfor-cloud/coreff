@@ -38,7 +38,7 @@ def search_by_code(user, password, code, session):
 
     with session as s:
         res = s.get("https://informes.axesor.es/informe", params=params)
-    return parse_infos(res.text)    #! à retester en fonction du retour API
+    return parse_search_code(res.text)
 
 def get_infos(user, password, code, session):
     params = {"cod_usuario": user, "cod_servicio": "388", "cod_idioma": "2"}
@@ -51,6 +51,14 @@ def get_infos(user, password, code, session):
     with session as s:
         res = s.get("https://informes.axesor.es/informe", params=params)
     return parse_infos(res.text)
+
+def parse_search_code(response:str):
+    root = ET.fromstring(response)[0]
+    infos = {}
+    infos["name"] = root.findall("./SeccionDatosGenerales/Nombre", {"":"*"})[0].text
+    infos["coreff_company_code"] = root.findall("./ListaSubvencionesBoletin/Subvencion/Cif", {"":"*"})[0].text
+    infos["axesor_internal_id"] = root.findall("./EstadisticaSociedadSector", {"":"*"})[0].get("CodInfotel")
+    return [infos]
 
 def parse_infos(response:str):
     root = ET.fromstring(response)[0]
