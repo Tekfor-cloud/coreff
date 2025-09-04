@@ -42,17 +42,18 @@ class AxesorDataMixin(models.AbstractModel):
             rec.street = infos["street"]
             rec.city = infos["city"]
             rec.zip = infos["zip"]
-            country_name = infos["country"]
-            country_code = pycountry.countries.search_fuzzy(country_name)[0].alpha_2
-            cr = self.env.cr
-            cr.execute(f"select id from res_country where code = '{country_code}' limit 1")
-            self.country_id = cr.fetchone()
             rec.phone = infos["phone"]
             rec.website = infos["website"]
             rec.email = infos["email"]
             rec.vat = infos["tax_id"]
             rec.axesor_risk_score = infos["axesor_risk_score"]
             rec.axesor_data = infos["axesor_data"]
+            country_name = infos["country"]
+            if country_name:
+                country_code = pycountry.countries.search_fuzzy(country_name)[0].alpha_2
+                cr = self.env.cr
+                cr.execute(f"select id from res_country where code = '{country_code}' limit 1")
+                self.country_id = cr.fetchone()
 
     def axesor_get_report(self):
         for rec in self:

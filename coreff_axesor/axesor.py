@@ -1,8 +1,26 @@
-import requests
 import xml.etree.ElementTree as ET
 import xml.dom.minidom
 import hashlib
 
+
+def get_text_safely(tree, path):
+    fetch_val = tree.findall(f"./{path}",{"":"*"})
+    if fetch_val:
+        return fetch_val[0].text
+    else:
+        return ""
+    
+def get_attrib_safely(tree, path, attrib_name):
+    fetch_val = tree.findall(f"./{path}",{"":"*"})
+    if fetch_val:
+        try:
+            attribute = fetch_val[0].attrib[attrib_name]
+        except:
+            attribute = ""
+        finally:
+            return attribute
+    else:
+        return ""
 
 def search_parse(response:str):
     root = ET.fromstring(response)
@@ -10,8 +28,8 @@ def search_parse(response:str):
     companies_infos = []
     for company in companies:
         company_infos = {}
-        company_infos["name"] = company.findall("./NombreSociedad",{"":"*"})[0].text
-        company_infos["coreff_company_code"] = company.findall("./Cif",{"":"*"})[0].text
+        company_infos["name"] = get_text_safely(company,"NombreSociedad")
+        company_infos["coreff_company_code"] = get_text_safely(company,"Cif")
         company_infos["axesor_internal_id"] = company.get("CodInfotel")
         companies_infos.append(company_infos)
     return companies_infos
@@ -55,23 +73,23 @@ def get_infos(user, password, code, session):
 def parse_search_code(response:str):
     root = ET.fromstring(response)[0]
     infos = {}
-    infos["name"] = root.findall("./SeccionDatosGenerales/Nombre", {"":"*"})[0].text
-    infos["coreff_company_code"] = root.findall("./ListaSubvencionesBoletin/Subvencion/Cif", {"":"*"})[0].text
+    infos["name"] = get_text_safely(root, "SeccionDatosGenerales/Nombre")
+    infos["coreff_company_code"] = get_text_safely(root, "ListaSubvencionesBoletin/Subvencion/Cif")
     infos["axesor_internal_id"] = root.findall("./EstadisticaSociedadSector", {"":"*"})[0].get("CodInfotel")
     return [infos]
 
 def parse_infos(response:str):
     root = ET.fromstring(response)[0]
     infos = {}
-    infos["street"] = root.findall("./ListaDelegaciones/Delegacion/Domicilio", {"":"*"})[0].text
-    infos["city"] = root.findall("./ListaDelegaciones/Delegacion/Municipio", {"":"*"})[0].text
-    infos["zip"] = root.findall("./ListaDelegaciones/Delegacion/CodigoPostal", {"":"*"})[0].text
-    infos["country"] = root.findall("./ListaVentaGeografia/VentaGeografia/Pais", {"":"*"})[0].attrib["NombrePais"]
-    infos["phone"] = root.findall("./SeccionDatosGenerales/DatosContacto/Telefono", {"":"*"})[0].text
-    infos["email"] = root.findall("./SeccionDatosGenerales/DatosContacto/Email", {"":"*"})[0].text
-    infos["website"] = root.findall("./SeccionDatosGenerales/DatosContacto/Url", {"":"*"})[0].text
-    infos["axesor_risk_score"] = root.findall("./Rating/RatingAxesorDef", {"":"*"})[0].text
-    infos["tax_id"] = root.findall("./IdentificacionBalance/IdentificacionSociedad/Nif", {"":"*"})[0].text
+    infos["street"] = get_text_safely(root, "ListaDelegaciones/Delegacion/Domicilio")
+    infos["city"] = get_text_safely(root, "ListaDelegaciones/Delegacion/Municipio")
+    infos["zip"] = get_text_safely(root, "ListaDelegaciones/Delegacion/CodigoPostal")
+    infos["country"] = get_attrib_safely(root, "ListaVentaGeografia/VentaGeografia/Pais", "NombrePais")
+    infos["phone"] = get_text_safely(root, "SeccionDatosGenerales/DatosContacto/Telefono")
+    infos["email"] = get_text_safely(root, "SeccionDatosGenerales/DatosContacto/Email")
+    infos["website"] = get_text_safely(root, "SeccionDatosGenerales/DatosContacto/Url")
+    infos["axesor_risk_score"] = get_text_safely(root, "Rating/RatingAxesorDef")
+    infos["tax_id"] = get_text_safely(root, "IdentificacionBalance/IdentificacionSociedad/Nif")
     infos["axesor_data"] = xml.dom.minidom.parseString(response).toprettyxml()
     return infos
 
