@@ -1,39 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-  <record model="ir.ui.view"
-    id="coreff_partner_form">
+  <record model="ir.ui.view" id="coreff_partner_form">
     <field name="name">coreff.partner.form</field>
     <field name="model">res.partner</field>
-    <field name="inherit_id"
-      ref="base.view_partner_form" />
-    <field name="arch"
-      type="xml">
-      <xpath expr="//div[hasclass('oe_title')]"
-        position="after">
-        <p id="alert_coreff"
-          class="alert alert-warning"
-          role="alert"
-          style="display: none;" />
+    <field name="inherit_id" ref="base.view_partner_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//div[hasclass('oe_title')]" position="after">
+        <p id="alert_coreff" class="alert alert-warning" role="alert" style="display: none;"/>
       </xpath>
 
-      <xpath expr="//field[@name='name']"
-        position="attributes">
+      <xpath expr="//field[@name='name']" position="attributes">
         <attribute name="widget">field_coreff_autocomplete</attribute>
         <attribute name="options">{'headOffice': True}</attribute>
         <attribute name="autocomplete">new-password</attribute>
       </xpath>
 
-      <xpath expr="//field[@name='name']/.."
-        position="after">
+      <xpath expr="//field[@name='name']/.." position="after">
         <h2>
-          <field name="coreff_company_code_mandatory"
-            invisible="1" />
-          <field name="coreff_company_code"
-            widget="field_coreff_autocomplete"
-            options="{'headOffice': True}"
+          <field name="coreff_company_code_mandatory" invisible="1"/>
+          <field name="coreff_company_code" widget="field_coreff_autocomplete" options="{'headOffice': True}"
             placeholder="Company code"
-            attrs="{'invisible': [('is_company', '=', False)], 'required': [('coreff_company_code_mandatory','=',True)]}" />
+            attrs="{'invisible': [('is_company', '=', False)], 'required': [('is_company', '=', True), ('coreff_company_code_mandatory','=',True)]}"/>
         </h2>
       </xpath>
     </field>
