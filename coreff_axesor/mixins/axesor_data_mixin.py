@@ -1,9 +1,7 @@
 from odoo import fields, models, _
 from odoo.tools.config import config
 from .. import axesor as AX
-import pycountry
 import requests
-
 
 class AxesorDataMixin(models.AbstractModel):
     """
@@ -48,12 +46,9 @@ class AxesorDataMixin(models.AbstractModel):
             rec.vat = infos["tax_id"]
             rec.axesor_risk_score = infos["axesor_risk_score"]
             rec.axesor_data = infos["axesor_data"]
-            country_name = infos["country"]
-            if country_name:
-                country_code = pycountry.countries.search_fuzzy(country_name)[0].alpha_2
-                cr = self.env.cr
-                cr.execute(f"select id from res_country where code = '{country_code}' limit 1")
-                self.country_id = cr.fetchone()
+            state = infos["state"]
+            rec.state_id = self.env["res.country.state"].search([("name","ilike",state)], limit=1)
+            rec.country_id = self.env.ref("base.es")
 
     def axesor_get_report(self):
         for rec in self:

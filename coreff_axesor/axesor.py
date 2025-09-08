@@ -9,18 +9,6 @@ def get_text_safely(tree, path):
         return fetch_val[0].text
     else:
         return ""
-    
-def get_attrib_safely(tree, path, attrib_name):
-    fetch_val = tree.findall(f"./{path}",{"":"*"})
-    if fetch_val:
-        try:
-            attribute = fetch_val[0].attrib[attrib_name]
-        except:
-            attribute = ""
-        finally:
-            return attribute
-    else:
-        return ""
 
 def search_parse(response:str):
     root = ET.fromstring(response)
@@ -84,7 +72,6 @@ def parse_infos(response:str):
     infos["street"] = get_text_safely(root, "ListaDelegaciones/Delegacion/Domicilio")
     infos["city"] = get_text_safely(root, "ListaDelegaciones/Delegacion/Municipio")
     infos["zip"] = get_text_safely(root, "ListaDelegaciones/Delegacion/CodigoPostal")
-    infos["country"] = get_attrib_safely(root, "ListaVentaGeografia/VentaGeografia/Pais", "NombrePais")
     infos["phone"] = get_text_safely(root, "SeccionDatosGenerales/DatosContacto/Telefono")
     infos["email"] = get_text_safely(root, "SeccionDatosGenerales/DatosContacto/Email")
     infos["website"] = get_text_safely(root, "SeccionDatosGenerales/DatosContacto/Url")
@@ -92,4 +79,3 @@ def parse_infos(response:str):
     infos["tax_id"] = get_text_safely(root, "IdentificacionBalance/IdentificacionSociedad/Nif")
     infos["axesor_data"] = xml.dom.minidom.parseString(response).toprettyxml()
     return infos
-
