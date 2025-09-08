@@ -83,15 +83,6 @@ class CoreffAutoComplete extends AutoComplete {
     this.nextOptionId = 0;
     this.sources = [];
 
-    this.state = useState({
-      navigationRev: 0,
-      optionsRev: 0,
-      open: false,
-      activeSourceOption: null,
-      value: this.props.value,
-      headOffice: true,
-    });
-
     this.inputRef = useForwardRefToParent("input");
     this.root = useRef("root");
 
@@ -120,6 +111,16 @@ class CoreffAutoComplete extends AutoComplete {
     this.hotkeysToRemove = [];
 
     super.setup();
+
+    this.state = useState({
+      navigationRev: 0,
+      optionsRev: 0,
+      open: false,
+      activeSourceOption: null,
+      value: this.props.value,
+      headOffice: true,
+    });
+
     owl.onWillUpdateProps((nextProps) => {
       if (this.props.value !== nextProps.value || this.forceValFromProp) {
         this.forceValFromProp = false;
