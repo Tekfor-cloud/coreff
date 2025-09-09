@@ -72,6 +72,7 @@ def parse_infos(response:str):
     infos["street"] = get_text_safely(root, "ListaDelegaciones/Delegacion/Domicilio")
     infos["city"] = get_text_safely(root, "ListaDelegaciones/Delegacion/Municipio")
     infos["zip"] = get_text_safely(root, "ListaDelegaciones/Delegacion/CodigoPostal")
+    infos["state"] = get_text_safely(root, "ListaDelegaciones/Delegacion/Provincia")
     infos["phone"] = get_text_safely(root, "SeccionDatosGenerales/DatosContacto/Telefono")
     infos["email"] = get_text_safely(root, "SeccionDatosGenerales/DatosContacto/Email")
     infos["website"] = get_text_safely(root, "SeccionDatosGenerales/DatosContacto/Url")
