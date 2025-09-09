@@ -22,10 +22,6 @@
                         <field name="axesor_data" />
                         <button string="Get company's infos" name="axesor_get_infos" type="object"
                             attrs="{'invisible': [('axesor_visibility', '=', False)]}" />
-                        <button string="Retrieve Directors"
-                            name="axesor_retrieve_directors"
-                            type="object" />
-                        <button string="Get Report" name="axesor_get_report" type="object" />
                     </group>
                 </page>
             </xpath>
