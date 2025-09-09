@@ -12,9 +12,6 @@
         "views/res_partner_views.xml",
         "data/coreff_connector.xml",
     ],
-    "external_dependencies": {
-        "python": ["pycountry"],
-    },
     "qweb": [],
     "installable": True,
     "images": [],

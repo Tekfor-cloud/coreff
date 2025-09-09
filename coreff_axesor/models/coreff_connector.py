@@ -26,18 +26,14 @@ class CoreffConnector(models.Model):
         """
         Get companies' informations for coreff
         """
-        endpoint = self.env.user.company_id.axesor_endpoint
+        session = self.env["coreff.axesor.data.mixin"].get_session()
+        user = self.env.user.company_id.axesor_login
+        password = self.env.user.company_id.axesor_password
         search_value = arguments["value"]
-        api_token = AX.get_token(endpoint, self.env.user.company_id.axesor_login, self.env.user.company_id.axesor_password)
         if arguments["valueIsCompanyCode"]:
-            response = AX.search_by_code(
-                endpoint, api_token, search_value
-            )
-            return response
+            response = AX.search_by_code(user, password, search_value, session)
         else:
-            response = AX.search_by_name(
-                endpoint, api_token, search_value
-            )
+            response = AX.search_by_name(user, password, search_value, session)
         return response
 
     @api.model

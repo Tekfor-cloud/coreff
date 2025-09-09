@@ -7,10 +7,10 @@
         <field name="inherit_id" ref="base.view_company_form" />
         <field name="arch" type="xml">
             <group name="coreff_core_fields" position="after">
-                <group string="Axesor">
+                <field name="axesor_visibility" invisible="1"/>
+                <group string="Axesor" attrs="{'invisible': [('axesor_visibility', '=', False)]}">
                     <field name="axesor_login" required="1" />
                     <field name="axesor_password" password="1" required="1" />
-                    <field name="axesor_endpoint" required="1" />
                 </group>
             </group>
         </field>
