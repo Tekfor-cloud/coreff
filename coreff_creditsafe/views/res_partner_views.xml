@@ -68,6 +68,9 @@
                             <field name="creditsafe_shareholderfunds" />
                             <field name="creditsafe_totalemployees" />
                         </group>
+                        <group>
+                            <field name="creditsafe_raw_data"/>
+                        </group>
                     </group>
                 </page>
             </xpath>
