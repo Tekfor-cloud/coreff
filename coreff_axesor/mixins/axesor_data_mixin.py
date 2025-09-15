@@ -1,7 +1,9 @@
 from odoo import fields, models, _
 from odoo.tools.config import config
+from odoo.exceptions import ValidationError
 from .. import axesor as AX
 import requests
+
 
 class AxesorDataMixin(models.AbstractModel):
     """
@@ -34,9 +36,15 @@ class AxesorDataMixin(models.AbstractModel):
         """Fetch the company's infos from the API using company code"""
         session = self.get_session()
         for rec in self:
+            if len(rec.coreff_company_code) < 9:
+                raise ValidationError(
+                    "The company code must be contain at least 9 caracters."
+                )
             login = self.env.user.company_id.axesor_login
             password = self.env.user.company_id.axesor_password
-            infos = AX.get_infos(login, password, rec.coreff_company_code, session)
+            infos = AX.get_infos(
+                login, password, rec.coreff_company_code, session
+            )
             rec.street = infos["street"]
             rec.city = infos["city"]
             rec.zip = infos["zip"]
@@ -47,7 +55,9 @@ class AxesorDataMixin(models.AbstractModel):
             rec.axesor_risk_score = infos["axesor_risk_score"]
             rec.axesor_data = infos["axesor_data"]
             state = infos["state"]
-            rec.state_id = self.env["res.country.state"].search([("name","ilike",state)], limit=1)
+            rec.state_id = self.env["res.country.state"].search(
+                [("name", "ilike", state)], limit=1
+            )
             rec.country_id = self.env.ref("base.es")
 
     def axesor_get_report(self):
