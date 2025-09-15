@@ -44,9 +44,9 @@ class CreditSafeDataMixin(models.AbstractModel):
         string="Latest Turnover", readonly=True
     )
     creditsafe_incorporation_date = fields.Datetime(readonly=True)
-    creditsafe_activity_code = fields.Char(
-        string="Activity Code", readonly=True
-    )
+    # creditsafe_activity_code = fields.Char(
+    #     string="Activity Code", readonly=True
+    # )
     creditsafe_activity_description = fields.Char(
         string="Activity Description", readonly=True
     )
@@ -200,7 +200,10 @@ class CreditSafeDataMixin(models.AbstractModel):
             )
             # CM: Get companySummary>mainActivity>code,description,
             # classification
-            rec.creditsafe_activity_code = company_summary.get(
+            # rec.creditsafe_activity_code = company_summary.get(
+            #     "mainActivity", {}
+            # ).get("code", "")
+            rec.coreff_activity_code = company_summary.get(
                 "mainActivity", {}
             ).get("code", "")
             rec.creditsafe_activity_description = company_summary.get(
@@ -272,6 +275,7 @@ class CreditSafeDataMixin(models.AbstractModel):
                 rec.coreff_credit_limit = credit_score.get(
                     "currentContractLimit", {}
                 ).get("value", 0)
+
             except:  # noqa: E722
                 rec.creditsafe_rating = 0
 

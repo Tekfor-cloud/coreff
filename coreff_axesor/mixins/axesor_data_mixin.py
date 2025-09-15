@@ -59,6 +59,7 @@ class AxesorDataMixin(models.AbstractModel):
                 [("name", "ilike", state)], limit=1
             )
             rec.country_id = self.env.ref("base.es")
+            rec.coreff_activity_code = infos["cnae"]
 
     def axesor_get_report(self):
         for rec in self:

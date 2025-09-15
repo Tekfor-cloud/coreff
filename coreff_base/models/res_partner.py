@@ -32,6 +32,7 @@ class ResPartner(models.Model):
     )
     coreff_company_score = fields.Integer(string="Rating in %", readonly=True)
     coreff_credit_limit = fields.Integer(readonly=True)
+    coreff_activity_code = fields.Char(string="Activity Code", readonly=True)
 
     # -------------------------
     # unimplemented method that will be defined in other module to
