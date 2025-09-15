@@ -148,7 +148,7 @@ class CreditSafeDataMixin(models.AbstractModel):
                 "employeesInformation", {}
             )
 
-            rec.</field> = json.dumps(company, indent=2)
+            rec.creditsafe_raw_data = json.dumps(company, indent=2)
 
             # CM: Retrieve company address details to override existing
             rec.phone = company_address.get("telephone", "")
@@ -261,14 +261,14 @@ class CreditSafeDataMixin(models.AbstractModel):
             except:  # noqa: E722
                 rec.creditsafe_rating = 0
                 rec.coreff_company_score = 0
-                
+
             rec.creditsafe_rating_short = credit_score.get(
                 "currentCreditRating", {}
             ).get("commonDescription", "")
             rec.creditsafe_rating_long = credit_score.get(
                 "currentCreditRating", {}
             ).get("providerDescription", "")
-            
+
             try:
                 if (
                     credit_score.get("currentCreditRating", {})
@@ -283,15 +283,14 @@ class CreditSafeDataMixin(models.AbstractModel):
                     )
             except:  # noqa: E722
                 rec.creditsafe_credit_limit = 0
-                
+
             rec.creditsafe_contract_limit = credit_score.get(
                 "currentContractLimit", {}
             ).get("value", 0)
-            
+
             rec.coreff_credit_limit = credit_score.get(
                 "currentContractLimit", {}
             ).get("value", 0)
-
 
             # CM: Format string to datetime to store in Odoo field
             try:
