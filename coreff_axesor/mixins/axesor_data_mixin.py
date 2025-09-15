@@ -38,7 +38,7 @@ class AxesorDataMixin(models.AbstractModel):
         for rec in self:
             if len(rec.coreff_company_code) < 9:
                 raise ValidationError(
-                    "The company code must be longer than 9 caracters."
+                    "The company code must be contain at least 9 caracters."
                 )
             login = self.env.user.company_id.axesor_login
             password = self.env.user.company_id.axesor_password
