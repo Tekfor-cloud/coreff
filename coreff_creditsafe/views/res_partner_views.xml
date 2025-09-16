@@ -42,7 +42,6 @@
                             <field name="creditsafe_court_registry_number" />
                             <field name="creditsafe_court_registry_description" />
                             <field name="creditsafe_incorporation_date" />
-                            <field name="coreff_activity_code"/>
                             <field name="creditsafe_activity_description" />
                             <!--CM: Add field for mainActivity classification-->
                             <field name="creditsafe_activity_classification" />
