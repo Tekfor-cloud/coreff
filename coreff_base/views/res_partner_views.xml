@@ -24,6 +24,11 @@
             attrs="{'invisible': [('is_company', '=', False)], 'required': [('is_company', '=', True), ('coreff_company_code_mandatory','=',True)]}"/>
         </h2>
       </xpath>
+
+      <xpath expr="//field[@name='lang']" position="before">
+          <field name="coreff_activity_code"/>
+      </xpath>
+
     </field>
   </record>
 

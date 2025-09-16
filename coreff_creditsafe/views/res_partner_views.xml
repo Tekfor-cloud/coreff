@@ -42,7 +42,6 @@
                             <field name="creditsafe_court_registry_number" />
                             <field name="creditsafe_court_registry_description" />
                             <field name="creditsafe_incorporation_date" />
-                            <field name="creditsafe_activity_code" />
                             <field name="creditsafe_activity_description" />
                             <!--CM: Add field for mainActivity classification-->
                             <field name="creditsafe_activity_classification" />
@@ -67,6 +66,9 @@
                             <field name="creditsafe_pretaxprofit" />
                             <field name="creditsafe_shareholderfunds" />
                             <field name="creditsafe_totalemployees" />
+                        </group>
+                        <group string="Raw data">
+                            <field name="creditsafe_raw_data"/>
                         </group>
                     </group>
                 </page>

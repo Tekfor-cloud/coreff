@@ -44,9 +44,7 @@ class CreditSafeDataMixin(models.AbstractModel):
         string="Latest Turnover", readonly=True
     )
     creditsafe_incorporation_date = fields.Datetime(readonly=True)
-    creditsafe_activity_code = fields.Char(
-        string="Activity Code", readonly=True
-    )
+
     creditsafe_activity_description = fields.Char(
         string="Activity Description", readonly=True
     )
@@ -200,7 +198,7 @@ class CreditSafeDataMixin(models.AbstractModel):
             )
             # CM: Get companySummary>mainActivity>code,description,
             # classification
-            rec.creditsafe_activity_code = company_summary.get(
+            rec.coreff_activity_code = company_summary.get(
                 "mainActivity", {}
             ).get("code", "")
             rec.creditsafe_activity_description = company_summary.get(
@@ -250,30 +248,44 @@ class CreditSafeDataMixin(models.AbstractModel):
                     / (creditsafe_rating_max - creditsafe_rating_min)
                     * 100
                 )
-                rec.creditsafe_rating_short = credit_score.get(
-                    "currentCreditRating", {}
-                ).get("commonDescription", "")
-                rec.creditsafe_rating_long = credit_score.get(
-                    "currentCreditRating", {}
-                ).get("providerDescription", "")
-                rec.creditsafe_credit_limit = (
-                    credit_score.get("currentCreditRating", {})
-                    .get("creditLimit", {})
-                    .get("value", 0)
-                )
-                rec.creditsafe_contract_limit = credit_score.get(
-                    "currentContractLimit", {}
-                ).get("value", 0)
                 rec.coreff_company_score = int(
                     (creditsafe_rating_value - creditsafe_rating_min)
                     / (creditsafe_rating_max - creditsafe_rating_min)
                     * 100
                 )
-                rec.coreff_credit_limit = credit_score.get(
-                    "currentContractLimit", {}
-                ).get("value", 0)
             except:  # noqa: E722
                 rec.creditsafe_rating = 0
+                rec.coreff_company_score = 0
+
+            rec.creditsafe_rating_short = credit_score.get(
+                "currentCreditRating", {}
+            ).get("commonDescription", "")
+            rec.creditsafe_rating_long = credit_score.get(
+                "currentCreditRating", {}
+            ).get("providerDescription", "")
+
+            try:
+                if (
+                    credit_score.get("currentCreditRating", {})
+                    .get("creditLimit", {})
+                    .get("value", 0)
+                    .isdecimal()
+                ):
+                    rec.creditsafe_credit_limit = (
+                        credit_score.get("currentCreditRating", {})
+                        .get("creditLimit", {})
+                        .get("value", 0)
+                    )
+            except:  # noqa: E722
+                rec.creditsafe_credit_limit = 0
+
+            rec.creditsafe_contract_limit = credit_score.get(
+                "currentContractLimit", {}
+            ).get("value", 0)
+
+            rec.coreff_credit_limit = credit_score.get(
+                "currentContractLimit", {}
+            ).get("value", 0)
 
             # CM: Format string to datetime to store in Odoo field
             try:
