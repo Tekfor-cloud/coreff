@@ -6,7 +6,7 @@
 
 {
     "name": "CoreFF: CreditSafe",
-    "version": "16.0.25.9.3",
+    "version": "16.0.1.2.0",
     "category": "CoreFF",
     "author": "Article714",
     "license": "LGPL-3",
