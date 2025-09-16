@@ -200,9 +200,6 @@ class CreditSafeDataMixin(models.AbstractModel):
             )
             # CM: Get companySummary>mainActivity>code,description,
             # classification
-            # rec.creditsafe_activity_code = company_summary.get(
-            #     "mainActivity", {}
-            # ).get("code", "")
             rec.coreff_activity_code = company_summary.get(
                 "mainActivity", {}
             ).get("code", "")
