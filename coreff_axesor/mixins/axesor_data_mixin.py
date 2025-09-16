@@ -54,6 +54,7 @@ class AxesorDataMixin(models.AbstractModel):
             rec.vat = infos["tax_id"]
             rec.axesor_risk_score = infos["axesor_risk_score"]
             rec.axesor_data = infos["axesor_data"]
+            rec.axesor_internal_id = infos["internal_id"]
             state = infos["state"]
             rec.state_id = self.env["res.country.state"].search(
                 [("name", "ilike", state)], limit=1

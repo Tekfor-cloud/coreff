@@ -87,6 +87,9 @@ def parse_search_code(response: str):
 def parse_infos(response: str):
     root = ET.fromstring(response)[0]
     infos = {}
+    infos["internal_id"] = root.findall(
+        "./EstadisticaSociedadSector", {"": "*"}
+    )[0].get("CodInfotel")
     infos["street"] = get_text_safely(
         root, "ListaDelegaciones/Delegacion/Domicilio"
     )
