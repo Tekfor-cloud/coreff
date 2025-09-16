@@ -5,13 +5,16 @@ from openupgradelib import openupgrade
 def migrate(env, version):
 
     if openupgrade.column_exists(
-        env.cr, "res_partner", "credisafe_activity_code"
+        env.cr, "res_partner", "creditsafe_activity_code"
     ):
         openupgrade.copy_columns(
             env.cr,
             {
                 "res_partner": [
-                    ("credisafe_activity_code", "credisafe_activity_code_old")
+                    (
+                        "creditsafe_activity_code",
+                        "creditsafe_activity_code_old",
+                    )
                 ]
             },
         )
