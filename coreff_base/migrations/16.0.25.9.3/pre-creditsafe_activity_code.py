@@ -14,6 +14,7 @@ def migrate(env, version):
                     (
                         "creditsafe_activity_code",
                         "creditsafe_activity_code_old",
+                        None,
                     )
                 ]
             },
