@@ -44,9 +44,7 @@ class CreditSafeDataMixin(models.AbstractModel):
         string="Latest Turnover", readonly=True
     )
     creditsafe_incorporation_date = fields.Datetime(readonly=True)
-    # creditsafe_activity_code = fields.Char(
-    #     string="Activity Code", readonly=True
-    # )
+
     creditsafe_activity_description = fields.Char(
         string="Activity Description", readonly=True
     )
