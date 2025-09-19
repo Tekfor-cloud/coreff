@@ -45,6 +45,11 @@ class AxesorDataMixin(models.AbstractModel):
             infos = AX.get_infos(
                 login, password, rec.coreff_company_code, session
             )
+
+            # Compatibility with base_location module : https://github.com/OCA/partner-contact/tree/16.0/base_location
+            if "zip_id" in rec._fields:
+                rec.zip_id = False
+
             rec.street = infos["street"]
             rec.city = infos["city"]
             rec.zip = infos["zip"]
