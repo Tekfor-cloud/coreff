@@ -117,6 +117,8 @@ def parse_infos(response: str):
     infos["tax_id"] = get_text_safely(
         root, "IdentificacionBalance/IdentificacionSociedad/Nif"
     )
-    infos["cnae"] = get_text_safely(root, "IdentificacionBalance/Sector/Cnae")
+    infos["cnae"] = get_text_safely(
+        root, "IdentificacionBalance/Sector/Cnae"
+    ) or get_text_safely(root, "ActividadComercial/Cnae/CodigoSIC")
     infos["axesor_data"] = xml.dom.minidom.parseString(response).toprettyxml()
     return infos
