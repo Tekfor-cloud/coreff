@@ -6,6 +6,7 @@ Created on 8 August 2018
 @license: LGPL v3
 """
 
+import logging
 from odoo import api, models, fields, _
 from odoo.exceptions import UserError
 
@@ -66,6 +67,19 @@ class ResPartner(models.Model):
             or "coreff_company_code" in values
         ):
             self._check_company_code()
+        if "coreff_activity_code" in values:
+            logging.info(
+                "coreff_activity_code:%s", values["coreff_activity_code"]
+            )
+            if not self.industry_id:
+                code = values["coreff_activity_code"]
+                code = f"{code[0:2]}.{code[2:4]}"
+                logging.info("code:%s", code)
+                industry_id = self.env["res.partner.industry"].search(
+                    [("full_name", "like", code)], limit=1
+                )
+                logging.info("industry_id:%s", industry_id.full_name)
+                values["industry_id"] = industry_id.id
         return res
 
     def _check_company_code(self):
