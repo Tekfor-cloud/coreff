@@ -59,6 +59,15 @@ class ResPartner(models.Model):
         return rec
 
     def write(self, values):
+        if "coreff_activity_code" in values:
+            if not self.industry_id:
+                code = values["coreff_activity_code"]
+                code = f"{code[0:2]}.{code[2:4]}"
+                industry_id = self.env["res.partner.industry"].search(
+                    [("full_name", "like", code)], limit=1
+                )
+                values["industry_id"] = industry_id.id
+
         res = super(ResPartner, self).write(values)
         if (
             values.get("is_company")
