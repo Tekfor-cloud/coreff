@@ -15,6 +15,8 @@
                             <button string="Get company's infos" name="axesor_get_infos" type="object"
                                 attrs="{'invisible': ['|', ('axesor_visibility', '=', False), ('axesor_internal_id', '=', False)]}"
                                 colspan="2"/>
+                            <button string="Get Report" name="axesor_get_report" type="object"
+                                attrs="{'invisible': ['|', ('axesor_visibility', '=', False), ('axesor_internal_id', '=', False)]}"/>
                             <field name="axesor_internal_id" force_save="1" readonly="1" colspan="2"/>
                         </group>
                         <group>

@@ -57,7 +57,12 @@ def search_by_code(user, password, code, session):
 
 
 def get_infos(user, password, code, session):
-    params = {"cod_usuario": user, "cod_servicio": "388", "cod_idioma": "2"}
+    params = {
+        "cod_usuario": user,
+        "cod_servicio": "388",
+        "cod_idioma": "2",
+        "tip_formato": "2",
+    }
     params.update({"cif": code})
 
     cadena = "".join(params.values())
@@ -69,6 +74,26 @@ def get_infos(user, password, code, session):
     with session as s:
         res = s.get("https://informes.axesor.es/informe", params=params)
     return parse_infos(res.text)
+
+
+def get_infos_pdf(user, password, code, session):
+    params = {
+        "cod_usuario": user,
+        "cod_servicio": "388",
+        "cod_idioma": "2",
+        "tip_formato": "3",
+    }
+    params.update({"cif": code})
+
+    cadena = "".join(params.values())
+    digest = hashlib.sha3_256(
+        (cadena + password).encode("iso-8859-1")
+    ).hexdigest()
+    params["crc"] = digest
+
+    with session as s:
+        res = s.get("https://informes.axesor.es/informe", params=params)
+    return res.content
 
 
 def parse_search_code(response: str):
