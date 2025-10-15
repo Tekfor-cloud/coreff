@@ -1,8 +1,9 @@
 from odoo import fields, models, _
-from odoo.tools.config import config
 from odoo.exceptions import ValidationError
 from .. import axesor as AX
 import requests
+from datetime import datetime
+import base64
 
 
 class AxesorDataMixin(models.AbstractModel):
@@ -16,6 +17,7 @@ class AxesorDataMixin(models.AbstractModel):
     axesor_visibility = fields.Boolean(compute="_compute_axesor_visibility")
 
     axesor_internal_id = fields.Char()
+    axesor_write_date = fields.Datetime()
     axesor_risk_score = fields.Text()
     axesor_data = fields.Text()
 
@@ -61,15 +63,38 @@ class AxesorDataMixin(models.AbstractModel):
             rec.axesor_data = infos["axesor_data"]
             rec.axesor_internal_id = infos["internal_id"]
             state = infos["state"]
-            rec.state_id = self.env["res.country.state"].search(
-                [("name", "ilike", state)], limit=1
+            rec.state_id = (
+                self.env["res.country.state"].search(
+                    [("name", "ilike", state)], limit=1
+                )
+                if state
+                else False
             )
             rec.country_id = self.env.ref("base.es")
             rec.coreff_activity_code = infos["cnae"]
+            rec.axesor_write_date = datetime.now()
 
     def axesor_get_report(self):
+        session = self.get_session()
         for rec in self:
-            return
+            if len(rec.coreff_company_code) < 9:
+                raise ValidationError(
+                    "The company code must be contain at least 9 caracters."
+                )
+            login = self.env.user.company_id.axesor_login
+            password = self.env.user.company_id.axesor_password
+            pdf_bin = AX.get_infos_pdf(
+                login, password, rec.coreff_company_code, session
+            )
+            self.env["ir.attachment"].create(
+                {
+                    "name": f"Axesor Report {datetime.now()}.pdf",
+                    "datas": base64.b64encode(pdf_bin),
+                    "type": "binary",
+                    "res_model": rec._name,
+                    "res_id": rec.id,
+                }
+            )
 
     def get_session(self):
         return requests.Session()

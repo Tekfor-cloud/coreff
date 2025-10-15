@@ -4,11 +4,8 @@ import hashlib
 
 
 def get_text_safely(tree, path):
-    fetch_val = tree.findall(f"./{path}", {"": "*"})
-    if fetch_val:
-        return fetch_val[0].text
-    else:
-        return ""
+    fetch_val = tree.find(f".//{path}", {"": "*"})
+    return fetch_val.text if fetch_val is not None else ""
 
 
 def search_parse(response: str):
@@ -42,22 +39,16 @@ def search_by_name(user, password, company_name, session):
 
 
 def search_by_code(user, password, code, session):
-    params = {"cod_usuario": user, "cod_servicio": "388", "cod_idioma": "2"}
-    params.update({"cif": code})
-
-    cadena = "".join(params.values())
-    digest = hashlib.sha3_256(
-        (cadena + password).encode("iso-8859-1")
-    ).hexdigest()
-    params["crc"] = digest
-
-    with session as s:
-        res = s.get("https://informes.axesor.es/informe", params=params)
-    return parse_search_code(res.text)
+    return search_by_name(user, password, code, session)
 
 
 def get_infos(user, password, code, session):
-    params = {"cod_usuario": user, "cod_servicio": "388", "cod_idioma": "2"}
+    params = {
+        "cod_usuario": user,
+        "cod_servicio": "388",
+        "cod_idioma": "2",
+        "tip_formato": "2",
+    }
     params.update({"cif": code})
 
     cadena = "".join(params.values())
@@ -71,40 +62,37 @@ def get_infos(user, password, code, session):
     return parse_infos(res.text)
 
 
-def parse_search_code(response: str):
-    root = ET.fromstring(response)[0]
-    infos = {}
-    infos["name"] = get_text_safely(root, "SeccionDatosGenerales/Nombre")
-    infos["coreff_company_code"] = get_text_safely(
-        root, "ListaSubvencionesBoletin/Subvencion/Cif"
-    )
-    infos["axesor_internal_id"] = root.findall(
-        "./EstadisticaSociedadSector", {"": "*"}
-    )[0].get("CodInfotel")
-    return [infos]
+def get_infos_pdf(user, password, code, session):
+    params = {
+        "cod_usuario": user,
+        "cod_servicio": "388",
+        "cod_idioma": "2",
+        "tip_formato": "3",
+    }
+    params.update({"cif": code})
+
+    cadena = "".join(params.values())
+    digest = hashlib.sha3_256(
+        (cadena + password).encode("iso-8859-1")
+    ).hexdigest()
+    params["crc"] = digest
+
+    with session as s:
+        res = s.get("https://informes.axesor.es/informe", params=params)
+    return res.content
 
 
 def parse_infos(response: str):
-    root = ET.fromstring(response)[0]
+    root = ET.fromstring(response)
     infos = {}
-    infos["internal_id"] = root.findall(
-        "./EstadisticaSociedadSector", {"": "*"}
-    )[0].get("CodInfotel")
-    infos["street"] = get_text_safely(
-        root, "ListaDelegaciones/Delegacion/Domicilio"
-    )
-    infos["city"] = get_text_safely(
-        root, "ListaDelegaciones/Delegacion/Municipio"
-    )
-    infos["zip"] = get_text_safely(
-        root, "ListaDelegaciones/Delegacion/CodigoPostal"
-    )
-    infos["state"] = get_text_safely(
-        root, "ListaDelegaciones/Delegacion/Provincia"
-    )
-    infos["phone"] = get_text_safely(
-        root, "SeccionDatosGenerales/DatosContacto/Telefono"
-    )
+    infos["internal_id"] = root.find(
+        ".//EstadisticaSociedadSector", {"": "*"}
+    ).get("CodInfotel")
+    infos["street"] = get_text_safely(root, "DatosContacto/Domicilio")
+    infos["city"] = get_text_safely(root, "IdentificacionSociedad/Poblacion")
+    infos["zip"] = get_text_safely(root, "IdentificacionSociedad/CodPostal")
+    infos["state"] = get_text_safely(root, "IdentificacionSociedad/Provincia")
+    infos["phone"] = get_text_safely(root, "DatosContacto/Telefono")
     infos["email"] = get_text_safely(
         root, "SeccionDatosGenerales/DatosContacto/Email"
     )
@@ -114,9 +102,7 @@ def parse_infos(response: str):
     infos["axesor_risk_score"] = get_text_safely(
         root, "Rating/RatingAxesorDef"
     )
-    infos["tax_id"] = get_text_safely(
-        root, "IdentificacionBalance/IdentificacionSociedad/Nif"
-    )
+    infos["tax_id"] = get_text_safely(root, "IdentificacionSociedad/Nif")
     infos["cnae"] = get_text_safely(
         root, "IdentificacionBalance/Sector/Cnae"
     ) or get_text_safely(root, "ActividadComercial/Cnae/CodigoSIC")
