@@ -3,6 +3,7 @@ from odoo.exceptions import ValidationError
 from .. import axesor as AX
 import requests
 from datetime import datetime
+import base64
 
 
 class AxesorDataMixin(models.AbstractModel):
@@ -82,12 +83,18 @@ class AxesorDataMixin(models.AbstractModel):
                 )
             login = self.env.user.company_id.axesor_login
             password = self.env.user.company_id.axesor_password
-            pdf = AX.get_infos_pdf(
+            pdf_bin = AX.get_infos_pdf(
                 login, password, rec.coreff_company_code, session
             )
-            import logging
-
-            logging.info(pdf)
+            self.env["ir.attachment"].create(
+                {
+                    "name": f"Axesor Report {datetime.now()}.pdf",
+                    "datas": base64.b64encode(pdf_bin),
+                    "type": "binary",
+                    "res_model": rec._name,
+                    "res_id": rec.id,
+                }
+            )
 
     def get_session(self):
         return requests.Session()
