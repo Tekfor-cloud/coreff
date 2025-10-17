@@ -5,7 +5,7 @@
 
 {
     "name": "CoreFF: Informa",
-    "version": "16.0.1.1.0",
+    "version": "17.0.1.1.0",
     "category": "CoreFF",
     "author": "Article714",
     "license": "LGPL-3",

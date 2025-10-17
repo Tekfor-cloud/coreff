@@ -6,7 +6,7 @@
 
 {
     "name": "CoreFF: Basic Module",
-    "version": "16.0.1.2.0",
+    "version": "17.0.1.2.0",
     "category": "CoreFF",
     "author": "Article714",
     "license": "LGPL-3",

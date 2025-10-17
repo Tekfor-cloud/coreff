@@ -29,16 +29,29 @@ max-line-length = 79
 per-file-ignores = ['__init__.py:F401']
 
 [tool.pylint.'MASTER']
-ignore = ["tests", "README.md", "pyproject.toml", "requirements.txt", "oca_dependencies.txt"]
+ignore = [
+  "tests",
+  "README.md",
+  "pyproject.toml",
+  "requirements.txt",
+  "oca_dependencies.txt",
+]
 load-plugins = ["pylint_odoo"]
 max-line-length = 79
 
 [tool.pylint.'ODOOLINT']
-license_allowed = ["AGPL-3", "GPL-2", "GPL-2 or any later version", "GPL-3", "GPL-3 or any later version", "LGPL-3"]
+license_allowed = [
+  "AGPL-3",
+  "GPL-2",
+  "GPL-2 or any later version",
+  "GPL-3",
+  "GPL-3 or any later version",
+  "LGPL-3",
+]
 manifest_required_authors = ["Article714"]
 manifest_required_keys = "license"
 readme_template_url = "https://github.com/OCA/maintainer-tools/blob/master/template/module/README.rst"
-valid_odoo_versions = ["12.0", "14.0", "15.0", "16.0"]
+valid_odoo_versions = ["12.0", "14.0", "15.0", "16.0", "17.0"]
 
 [tool.pylint.'MESSAGES CONTROL']
 disable = ["all"]
