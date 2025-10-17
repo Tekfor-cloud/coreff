@@ -20,13 +20,13 @@
         <h2>
           <field name="coreff_company_code_mandatory" invisible="1"/>
           <field name="coreff_company_code" widget="field_coreff_autocomplete" options="{'headOffice': True}"
-            placeholder="Company code"
-            attrs="{'invisible': [('is_company', '=', False)], 'required': [('is_company', '=', True), ('coreff_company_code_mandatory','=',True)]}"/>
+            placeholder="Company code" invisible="not is_company"
+            required="is_company and coreff_company_code_mandatory"/>
         </h2>
       </xpath>
 
       <xpath expr="//field[@name='lang']" position="before">
-          <field name="coreff_activity_code"/>
+        <field name="coreff_activity_code"/>
       </xpath>
 
     </field>
