@@ -136,6 +136,11 @@ class CoreffAutoComplete extends AutoComplete {
     });
   }
 
+  get hasOptions() {
+    // force true to get headoffice checkbox if not found
+    return true;
+  }
+
   async onUpdateHeadOffice(ev) {
     this.state.headOffice = ev.target.checked;
     this.props.onHeadOfficeCheck(this.state.headOffice);
