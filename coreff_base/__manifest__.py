@@ -21,9 +21,9 @@
     ],
     "assets": {
         "web.assets_backend": [
-            "coreff_base/static/src/scss/*",
-            "coreff_base/static/src/js/*",
-            "coreff_base/static/src/xml/*",
+            # "coreff_base/static/src/scss/*",
+            # "coreff_base/static/src/js/*",
+            # "coreff_base/static/src/xml/*",
         ],
     },
     "installable": True,
