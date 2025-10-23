@@ -48,7 +48,7 @@ class AxesorDataMixin(models.AbstractModel):
                 login, password, rec.coreff_company_code, session
             )
 
-            # Compatibility with base_location module : https://github.com/OCA/partner-contact/tree/17.0/base_location
+            # Compatibility with base_location module : https://github.com/OCA/partner-contact/tree/18.0/base_location
             if "zip_id" in rec._fields:
                 rec.zip_id = False
 

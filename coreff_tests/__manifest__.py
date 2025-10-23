@@ -6,7 +6,7 @@
 
 {
     "name": "CoreFF: Test Module",
-    "version": "17.0.1.1.0",
+    "version": "18.0.1.1.0",
     "category": "CoreFF",
     "author": "Article714",
     "license": "LGPL-3",
