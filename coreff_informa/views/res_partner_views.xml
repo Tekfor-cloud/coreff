@@ -1,72 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record model="ir.ui.view" 
-        id="informa_partner_form">
+    <record model="ir.ui.view" id="informa_partner_form">
         <field name="name">informa.partner.form</field>
         <field name="model">res.partner</field>
-        <field name="inherit_id" 
-            ref="coreff_base.coreff_partner_form" />
-        <field name="arch" 
-            type="xml">
+        <field name="inherit_id" ref="coreff_base.coreff_partner_form"/>
+        <field name="arch" type="xml">
 
-            <xpath expr="//page[@name='internal_notes']" 
-                position="before">
-                <field name="informa_visibility" 
-                    invisible="1" />
-                <page string="Informa" 
-                    attrs="{'invisible': ['|',('is_company', '=', False), ('informa_visibility', '=', False)]}">
+            <xpath expr="//page[@name='internal_notes']" position="before">
+                <field name="informa_visibility" invisible="1"/>
+                <page string="Informa" invisible="not is_company or not informa_visibility">
                     <group>
-                        <group col="1" 
-                            colspan="2">
-                            <button string="Informa Update" 
-                                name="update_informa_data" 
-                                type="object" 
-                                class="oe_highlight" 
-                                attrs="{'invisible' : [('informa_company_id', '=', False)]}" />
-                            <span attrs="{'invisible' : [('informa_last_update', '=', False)]}">Last updated on : <field name="informa_last_update"></field>
+                        <group col="1" colspan="2">
+                            <button string="Informa Update" name="update_informa_data" type="object"
+                                class="oe_highlight" invisible="not informa_company_id"/>
+                            <span invisible="not informa_last_update">Last updated on : <field
+                                    name="informa_last_update"/>
                             </span>
                         </group>
                         <group string="Decision Support">
-                            <field name="currency_id" 
-                                invisible="1" />
-                            <field name="informa_company_id" />
-                            <field name="informa_out_bus_ind" />
-                            <field name="informa_tot_empl" />
-                            <field name="informa_incn_yr" />
-                            <field name="informa_finl_embt_ind" />
-                            <field name="informa_dnb_ratg" />
-                            <field name="informa_max_cr" />
-                            <field name="informa_pnt_nme" />
-                            <field name="informa_pnt_duns" />
-                            <field name="informa_stmt_dt" />
-                            <field name="informa_stmt_crcy_cd" />
-                            <field name="informa_cash_liq_aset" 
-                                widget="monetary" />
-                            <field name="informa_tot_curr_aset" 
-                                widget="monetary" />
-                            <field name="informa_tot_aset" 
-                                widget="monetary" />
-                            <field name="informa_tot_curr_liab" 
-                                widget="monetary" />
-                            <field name="informa_tot_liab" 
-                                widget="monetary" />
-                            <field name="informa_net_wrth" 
-                                widget="monetary" />
-                            <field name="informa_stmt_from_dt" />
-                            <field name="informa_stmt_to_dt" />
-                            <field name="informa_sls" 
-                                widget="monetary" />
-                            <field name="informa_net_incm" 
-                                widget="monetary" />
-                            <field name="informa_qk_rato" />
-                            <field name="informa_curr_rato" />
-                            <field name="informa_prev_net_wrth" 
-                                widget="monetary" />
-                            <field name="informa_prev_sls" 
-                                widget="monetary" />
-                            <field name="informa_prev_stmt_dt" />
-                            <field name="informa_pnt_ctry_cd" />
+                            <field name="currency_id" invisible="1"/>
+                            <field name="informa_company_id"/>
+                            <field name="informa_out_bus_ind"/>
+                            <field name="informa_tot_empl"/>
+                            <field name="informa_incn_yr"/>
+                            <field name="informa_finl_embt_ind"/>
+                            <field name="informa_dnb_ratg"/>
+                            <field name="informa_max_cr"/>
+                            <field name="informa_pnt_nme"/>
+                            <field name="informa_pnt_duns"/>
+                            <field name="informa_stmt_dt"/>
+                            <field name="informa_stmt_crcy_cd"/>
+                            <field name="informa_cash_liq_aset" widget="monetary"/>
+                            <field name="informa_tot_curr_aset" widget="monetary"/>
+                            <field name="informa_tot_aset" widget="monetary"/>
+                            <field name="informa_tot_curr_liab" widget="monetary"/>
+                            <field name="informa_tot_liab" widget="monetary"/>
+                            <field name="informa_net_wrth" widget="monetary"/>
+                            <field name="informa_stmt_from_dt"/>
+                            <field name="informa_stmt_to_dt"/>
+                            <field name="informa_sls" widget="monetary"/>
+                            <field name="informa_net_incm" widget="monetary"/>
+                            <field name="informa_qk_rato"/>
+                            <field name="informa_curr_rato"/>
+                            <field name="informa_prev_net_wrth" widget="monetary"/>
+                            <field name="informa_prev_sls" widget="monetary"/>
+                            <field name="informa_prev_stmt_dt"/>
+                            <field name="informa_pnt_ctry_cd"/>
                         </group>
                     </group>
                 </page>

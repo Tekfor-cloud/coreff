@@ -1,71 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record model="ir.ui.view"
-        id="creditsafe_partner_form">
+    <record model="ir.ui.view" id="creditsafe_partner_form">
         <field name="name">creditsafe.partner.form</field>
         <field name="model">res.partner</field>
-        <field name="inherit_id"
-            ref="coreff_base.coreff_partner_form" />
-        <field name="arch"
-            type="xml">
+        <field name="inherit_id" ref="coreff_base.coreff_partner_form"/>
+        <field name="arch" type="xml">
 
-            <xpath expr="//page[@name='internal_notes']"
-                position="before">
-                <field name="creditsafe_visibility"
-                    invisible="1" />
-                <page string="CreditSafe"
-                    attrs="{'invisible': ['|',('is_company', '=', False), ('creditsafe_visibility', '=', False)]}">
+            <xpath expr="//page[@name='internal_notes']" position="before">
+                <field name="creditsafe_visibility" invisible="1"/>
+                <page string="CreditSafe" invisible="not is_company or not creditsafe_visibility">
                     <group>
-                        <group col="1"
-                            colspan="2">
-                            <span attrs="{'invisible' : [('creditsafe_last_update', '=', False)]}">
-                                Last updated on:
-                                <field name="creditsafe_last_update" />
+                        <group col="1" colspan="2">
+                            <span invisible="not creditsafe_last_update"> Last updated on: <field
+                                    name="creditsafe_last_update"/>
                             </span>
-                            <button string="CreditSafe Update"
-                                name="update_creditsafe_data"
-                                type="object"
-                                class="oe_highlight"
-                                confirm="Be careful, this action can override CreditSafe fields"
-                                attrs="{'invisible' : [('creditsafe_company_id', '=', False)]}" />
-                            <button string="Retrieve Directors"
-                                name="retrieve_directors_data"
-                                type="object"
-                                attrs="{'invisible' : [('creditsafe_company_id', '=', False)]}" />
+                            <button string="CreditSafe Update" name="update_creditsafe_data" type="object"
+                                class="oe_highlight" confirm="Be careful, this action can override CreditSafe fields"
+                                invisible="not creditsafe_company_id"/>
+                            <button string="Retrieve Directors" name="retrieve_directors_data" type="object"
+                                invisible="not creditsafe_company_id"/>
                         </group>
                         <group string="Identification">
-                            <field name="creditsafe_company_id" />
-                            <field name="creditsafe_company_name" />
-                            <field name="creditsafe_legal_form" />
-                            <field name="creditsafe_legal_form_code" />
-                            <field name="creditsafe_court_registry_number" />
-                            <field name="creditsafe_court_registry_description" />
-                            <field name="creditsafe_incorporation_date" />
-                            <field name="creditsafe_activity_description" />
-                            <!--CM: Add field for mainActivity classification-->
-                            <field name="creditsafe_activity_classification" />
-                            <field name="creditsafe_country" />
+                            <field name="creditsafe_company_id"/>
+                            <field name="creditsafe_company_name"/>
+                            <field name="creditsafe_legal_form"/>
+                            <field name="creditsafe_legal_form_code"/>
+                            <field name="creditsafe_court_registry_number"/>
+                            <field name="creditsafe_court_registry_description"/>
+                            <field name="creditsafe_incorporation_date"/>
+                            <field name="creditsafe_activity_description"/>
+                            <!--CM:
+                            Add field for mainActivity classification-->
+                            <field name="creditsafe_activity_classification"/>
+                            <field name="creditsafe_country"/>
                         </group>
                         <group string="Ratings">
-                            <field name="creditsafe_status" />
-                            <field name="creditsafe_rating"
-                                widget="percentpie" />
-                            <field name="creditsafe_rating_short" />
-                            <field name="creditsafe_rating_long" />
-                            <field name="creditsafe_credit_limit" />
-                            <field name="creditsafe_contract_limit" />
+                            <field name="creditsafe_status"/>
+                            <field name="creditsafe_rating" widget="percentpie"/>
+                            <field name="creditsafe_rating_short"/>
+                            <field name="creditsafe_rating_long"/>
+                            <field name="creditsafe_credit_limit"/>
+                            <field name="creditsafe_contract_limit"/>
                         </group>
                         <group string="Legal and Financials">
-                            <field name="creditsafe_last_judgement_date" />
-                            <field name="creditsafe_number_of_directors" />
-                            <field name="creditsafe_share_capital" />
-                            <!--CM: Add field for LatestTurnover, Yearenddate, Pretaxprofit, Shareholder Funds, TotalEmployees -->
-                            <field name="creditsafe_latest_turnover" />
-                            <field name="creditsafe_yearenddate" />
-                            <field name="creditsafe_pretaxprofit" />
-                            <field name="creditsafe_shareholderfunds" />
-                            <field name="creditsafe_totalemployees" />
+                            <field name="creditsafe_last_judgement_date"/>
+                            <field name="creditsafe_number_of_directors"/>
+                            <field name="creditsafe_share_capital"/>
+                            <!--CM:
+                            Add field for LatestTurnover, Yearenddate, Pretaxprofit, Shareholder Funds, TotalEmployees -->
+                            <field name="creditsafe_latest_turnover"/>
+                            <field name="creditsafe_yearenddate"/>
+                            <field name="creditsafe_pretaxprofit"/>
+                            <field name="creditsafe_shareholderfunds"/>
+                            <field name="creditsafe_totalemployees"/>
                         </group>
                         <group string="Raw data">
                             <field name="creditsafe_raw_data"/>

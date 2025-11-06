@@ -4,28 +4,27 @@
     <record id="informa_captive_form" model="ir.ui.view">
         <field name="name">informa.captive.form</field>
         <field name="model">res.company</field>
-        <field name="inherit_id" ref="base.view_company_form" />
+        <field name="inherit_id" ref="base.view_company_form"/>
         <field name="arch" type="xml">
             <group name="coreff_core_fields" position="after">
-                <field name="informa_visibility" invisible="1" />
-                <group string="Informa" attrs="{'invisible': [('informa_visibility', '=', False)]}">
+                <field name="informa_visibility" invisible="1"/>
+                <group string="Informa" invisible="not informa_visibility">
                     <group colspan="2">
-                        <field name="parent_id" invisible="1" groups="!base.group_multi_company" />
-                        <field name="informa_use_parent_company"
-                            attrs="{'invisible': [('parent_id', '=', False)]}" />
+                        <field name="parent_id" invisible="1" groups="!base.group_multi_company"/>
+                        <field name="informa_use_parent_company" invisible="not parent_id"/>
                     </group>
-                    <group attrs="{'invisible': [('informa_use_parent_company', '=', True)]}">
-                        <field name="informa_url" />
-                        <field name="informa_username" />
-                        <field name="informa_password" password="True" />
+                    <group invisible="informa_use_parent_company">
+                        <field name="informa_url"/>
+                        <field name="informa_username"/>
+                        <field name="informa_password" password="True"/>
                     </group>
-                    <group attrs="{'invisible': [('informa_use_parent_company', '=', False)]}">
-                        <field name="informa_parent_url" />
-                        <field name="informa_parent_username" />
-                        <field name="informa_parent_password" password="True" />
+                    <group invisible="not informa_use_parent_company">
+                        <field name="informa_parent_url"/>
+                        <field name="informa_parent_username"/>
+                        <field name="informa_parent_password" password="True"/>
                     </group>
                     <group>
-                        <field name="informa_country_code" />
+                        <field name="informa_country_code"/>
                     </group>
                 </group>
             </group>
