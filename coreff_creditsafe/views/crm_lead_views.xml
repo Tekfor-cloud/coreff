@@ -7,9 +7,9 @@
         <field name="inherit_id" ref="crm.crm_lead_view_form"/>
         <field name="arch" type="xml">
 
-            <xpath expr="//button[@name='action_set_lost']" position="after">
+            <header position="inside">
                 <button name="creditsafe_lookup" string="Creditsafe Lookup" type="object" invisible="type != 'lead'"/>
-            </xpath>
+            </header>
         </field>
     </record>
 
