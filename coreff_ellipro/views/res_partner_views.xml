@@ -9,10 +9,10 @@
 
             <xpath expr="//page[@name='internal_notes']" position="before">
                 <field name="ellipro_visibility" invisible="1"/>
-                <page string="Ellipro" attrs="{'invisible': [('is_company', '=', False)]}">
+                <page string="Ellipro" invisible="not is_company">
                     <group>
                         <button string="Get company's infos" name="ellipro_get_infos" type="object"
-                            attrs="{'invisible': [('ellipro_visibility', '=', True)]}"/>
+                            invisible="not ellipro_visibility"/>
                         <field name="ellipro_identifiant_interne" force_save="1" readonly="1"/>
                         <field name="ellipro_siren" force_save="1" readonly="1"/>
                         <field name="ellipro_siret" force_save="1" readonly="1"/>

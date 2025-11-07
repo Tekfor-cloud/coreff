@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record model="ir.ui.view"
-        id="creditsafe_lead_form">
+    <record model="ir.ui.view" id="creditsafe_lead_form">
         <field name="name">creditsafe.lead.form</field>
         <field name="model">crm.lead</field>
-        <field name="inherit_id"
-            ref="crm.crm_lead_view_form" />
-        <field name="arch"
-            type="xml">
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
 
-            <xpath expr="//button[@name='action_set_lost']"
-                position="after">
-              <button name="creditsafe_lookup" string="Creditsafe Lookup" type="object" attrs="{'invisible': [('type', '!=', 'lead')]}"/>
+            <xpath expr="//button[@name='action_set_lost']" position="after">
+                <button name="creditsafe_lookup" string="Creditsafe Lookup" type="object" invisible="type != 'lead'"/>
             </xpath>
         </field>
     </record>
