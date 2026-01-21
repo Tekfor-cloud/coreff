@@ -15,7 +15,6 @@
     "depends": ["base", "web"],
     "data": [
         "security/coreff_security.xml",
-        "views/coreff_config_views.xml",
         "views/res_company_views.xml",
         "views/res_partner_views.xml",
     ],
