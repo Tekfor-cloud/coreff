@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates>
-    <t t-name="coreff_base.PartnerAutoCompleteCharField" t-inherit="web.CharField" owl="1">
+    <t t-name="coreff_base.PartnerAutoCompleteCharField" t-inherit="web.CharField">
         <xpath expr="//t[@t-else='']" position="before">
             <t t-elif="props.record.resModel !== 'res.partner' || props.record.data.company_type === 'company'">
                 <CoreffAutoComplete value="props.value || ''" sources="sources" onSelect.bind="onSelect"
@@ -10,7 +10,7 @@
         </xpath>
     </t>
 
-    <t t-name="coreff_base.CharFieldDropdownOption" owl="1">
+    <t t-name="coreff_base.CharFieldDropdownOption">
         <div class="o_coreff_base_info">
             <strong t-esc="option.name or '&#160;'"/>
             <div t-esc="option.coreff_company_code"/>
@@ -18,7 +18,7 @@
         </div>
     </t>
 
-    <t t-name="coreff_base.AutoComplete" t-inherit="web.AutoComplete" owl="1">
+    <t t-name="coreff_base.AutoComplete" t-inherit="web.AutoComplete">
         <xpath expr="//ul/*[1]" position="before">
             <li>
                 <input id="head_office_checkbox" type="checkbox" t-att-checked="state.headOffice ? 'checked' : ''"
@@ -28,13 +28,13 @@
         </xpath>
     </t>
 
-    <t t-name="coreff_base.InsufficientCreditNotification" owl="1">
+    <t t-name="coreff_base.InsufficientCreditNotification">
         <div class="o-hidden-ios">
             <a class="btn btn-link" t-att-href="credits_url"><i class="fa fa-arrow-right"/> Buy more credits</a>
         </div>
     </t>
 
-    <t t-name="coreff_base.AccountTokenMissingNotification" owl="1">
+    <t t-name="coreff_base.AccountTokenMissingNotification">
         <div class="">
             <a class="btn btn-link" t-att-href="account_url"><i class="fa fa-arrow-right"/> Set Your Account Token</a>
         </div>

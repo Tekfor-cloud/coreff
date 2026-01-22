@@ -10,10 +10,9 @@
         <p id="alert_coreff" class="alert alert-warning" role="alert" style="display: none;"/>
       </xpath>
 
-      <xpath expr="//field[@name='name']" position="attributes">
+      <xpath expr="//field[@id='company']" position="attributes">
         <attribute name="widget">field_coreff_autocomplete</attribute>
         <attribute name="options">{'headOffice': True}</attribute>
-        <attribute name="autocomplete">new-password</attribute>
       </xpath>
 
       <xpath expr="//field[@name='name']/.." position="after">
