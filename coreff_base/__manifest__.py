@@ -20,7 +20,7 @@
     ],
     "assets": {
         "web.assets_backend": [
-            "coreff_base/static/src/**/*",
+            "coreff_base/static/src/coreff_autocomplete/*",
         ],
     },
     "installable": True,

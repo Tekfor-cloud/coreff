@@ -246,6 +246,9 @@ class CoreffConnector(models.Model):
                         if len(optional_val) > 0:
                             suggestion["phone"] = optional_val[0]
                         suggestions.append(suggestion)
+                    import logging
+
+                    logging.info(suggestions)
                     return suggestions
                 elif response.status_code in (401, 403):
                     if not retry:

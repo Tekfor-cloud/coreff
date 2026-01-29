@@ -12,15 +12,13 @@
 
       <xpath expr="//field[@id='company']" position="attributes">
         <attribute name="widget">field_coreff_autocomplete</attribute>
-        <attribute name="options">{'headOffice': True}</attribute>
       </xpath>
 
       <xpath expr="//field[@name='name']/.." position="after">
         <h2>
           <field name="coreff_company_code_mandatory" invisible="1"/>
-          <field name="coreff_company_code" widget="field_coreff_autocomplete" options="{'headOffice': True}"
-            placeholder="Company code" invisible="not is_company"
-            required="is_company and coreff_company_code_mandatory"/>
+          <field name="coreff_company_code" widget="field_coreff_autocomplete" placeholder="Company code"
+            invisible="not is_company" required="is_company and coreff_company_code_mandatory"/>
         </h2>
       </xpath>
 
