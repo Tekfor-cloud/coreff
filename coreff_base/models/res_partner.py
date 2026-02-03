@@ -61,11 +61,11 @@ class ResPartner(models.Model):
         # TODO
         return
 
-    @api.model
-    def create(self, values):
-        rec = super(ResPartner, self).create(values)
-        rec._check_company_code()
-        return rec
+    @api.model_create_multi
+    def create(self, vals_list):
+        recs = super(ResPartner, self).create(vals_list)
+        recs._check_company_code()
+        return recs
 
     def write(self, values):
         if "coreff_activity_code" in values:
