@@ -69,14 +69,19 @@ export function useCoreffAutocomplete() {
     countryId,
     isHeadOffice,
   ) {
-    const prom = orm.silent.call("coreff.api", "get_companies", [
-      {
-        valueIsCompanyCode: valueIsCompanyCode,
-        country_id: countryId,
-        is_head_office: isHeadOffice,
-        value: value,
-      },
-    ]);
+    const prom = orm.silent
+      .call("coreff.api", "get_companies", [
+        {
+          valueIsCompanyCode: valueIsCompanyCode,
+          country_id: countryId,
+          is_head_office: isHeadOffice,
+          value: value,
+        },
+      ])
+      .catch((error) => {
+        console.warn(error.data.arguments);
+        return [];
+      });
 
     const suggestions = await keepLastOdoo.add(prom);
     await Promise.all(
